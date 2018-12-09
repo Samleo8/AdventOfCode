@@ -32,22 +32,26 @@ function fullReaction(_str){
 		}
 	}
 
-	//outputString(_str);
+	outputString(_str);
 	return _str.length;
 }
 
 function outputString(_str){
 	if(_str == null || typeof _str == "undefined") _str = str;
 
-	console.log(_str.length, _str);
-	document.getElementById("out").innerHTML = "Length: "+_str.length+"<hr />"+_str;
+	//console.log(_str.length, _str);
+	document.getElementById("out").innerHTML += "<div>Length: "+_str.length+"<br />"+_str+"</div><hr />";
 }
 
-function optimiseReact(){
+function optimiseReact(_str){
+	if(_str == null || typeof _str == "undefined") _str = str;
+
+	document.getElementById("out").innerHTML = "";
+
 	var l, mn = 1E99, mn_letter = "";
 	for(var _i=0;_i<abc.length;_i++){
 		var r2 = new RegExp("["+abc[_i]+"]","gi");
-		var newStr = str.replace(r2,"");
+		var newStr = _str.replace(r2,"");
 
 		l = fullReaction(newStr);
 		if(l<mn){
@@ -56,5 +60,25 @@ function optimiseReact(){
 		}
 	}
 	console.log(mn,mn_letter);
+
+	document.getElementById("out").innerHTML += "<div><b>Letter: </b>"+mn_letter+"<br><b>Length: </b>"+mn+"</div>";
 	//outputString(mn);
+}
+
+function fullReact_UI(){
+	document.getElementById("out").innerHTML = "";
+
+	var _s = document.getElementById('input_text').value;
+
+	if(_s.length) fullReaction(_s);
+	else fullReaction();
+}
+
+function optimiseReact_UI(){
+	document.getElementById("out").innerHTML = "";
+
+	var _s = document.getElementById('input_text').value;
+
+	if(_s.length) optimiseReact(_s);
+	else optimiseReact();
 }
