@@ -4,6 +4,7 @@
 
 Codes used for [Advent of Code](http://adventofcode.com/ "Advent of Code").
 
-[![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/uses-html.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/uses-html.svg)](https://samleo8.github.io/AdventOfCode/)
 
-Note: Files with **.html** are likely to have visualizations of sorts.
+## Visualisations
+[Day 2](https://samleo8.github.io/AdventOfCode/2.html "Day 2")
