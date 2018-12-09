@@ -4,12 +4,59 @@
 		<meta charset="utf-8">
 		<title>AoC 7</title>
 		<style>
+		.container{
+			display: flex;
+			align-items: flex-start;
+			justify-content:space-around;
+		}
+
+		.title{
+			display: block;
+			font-size: 120%;
+			border-bottom: 1px dashed black;
+			margin-bottom: 5px;
+		}
+
+		.q7{
+			padding:10px;
+			width:45%;
+			height:100%;
+			flex:50%;
+		}
+
+		.header{
+			font-size: 105%;
+			font-weight: bold;
+			font-variant: caps;
+			border-bottom: 1px solid grey;
+			padding-bottom: 5px;
+			margin-bottom: 5px;
+		}
+
+		.complete{
+			color:lightgrey;
+		}
 		</style>
 	</head>
 	<body>
-		<input type="button" value="Do Step" onclick="doSteps2()"/>
-		<div id="answer"></div>
-		<div id="out"></div>
+		<div class="container">
+			<div class="q7" id="q7a">
+				<b class="title">7a</b>
+				<input type="button" value="Next Step" onclick="doSteps()"/> <input type="button" value="Complete All Steps" onclick="doSteps(true)"/> <input type="button" value="Reset" onclick="genSteps()"/>
+				<hr />
+				<div id="answer1"></div>
+				<div id="out1"></div>
+			</div>
+
+			<div class="q7" id="q7b">
+				<b class="title">7b</b>
+				<input type="button" value="Next Second" onclick="doSteps2(false)"/> <input type="button" value="Complete All Seconds" onclick="doSteps2(true)"/> <input type="button" value="Reset" onclick="genSteps()"/>
+				<hr />
+				<div id="answer2"></div>
+				<div id="out2"></div>
+			</div>
+		</div>
+
 		<script type="text/javascript" src="7.js"></script>
 	</body>
 </html>

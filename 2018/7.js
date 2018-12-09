@@ -107,11 +107,26 @@ var totalSteps = [];
 var steps = {}; //"letter":{"before":[array of letters to do before], "after":[array of letters to do after]}
 var abc = "abcdefghijklmnopqrstuvwxyz".toUpperCase().split("");
 
+var nWorkers = 5;
+
 function genSteps(){
+	//Reset
+	totalSteps = [];
+	secondsPassed = 0;
+	steps = {};
+
+	document.getElementById('answer1').innerHTML = "";
+	document.getElementById('out1').innerHTML = "";
+
+	document.getElementById('answer2').innerHTML = "";
+	document.getElementById('out2').innerHTML = "";
+
+	//Parse the input
 	var i,j;
 	for(i=0;i<abc.length;i++){
 		steps[abc[i].toUpperCase()] = {
 			"before":[],
+			"done":false,
 			"secondsNeeded":i+61,
 			"secondsUsed":0
 		};
@@ -123,13 +138,11 @@ function genSteps(){
 
 		steps[second].before.push(first);
 	}
-
-	//doSteps();
 }
 
-function doSteps(){
+function doSteps(recursive){
 	if(totalSteps.length==26){
-		document.getElementById('answer').innerHTML = "ANSWER: <b>"+totalSteps.join("")+"</b>";
+		document.getElementById('answer1').innerHTML = "ANSWER: <b>"+totalSteps.join("")+"</b>";
 		return;
 	}
 
@@ -139,7 +152,7 @@ function doSteps(){
 
 	for(i=0;i<abc.length;i++){
 		var l = abc[i].toUpperCase();
-		if(steps[l].before.length == 0){ //do this step first
+		if(steps[l].before.length == 0 && !steps[l].done){ //do this step first
 			totalSteps.push(l);
 			//currStep = l;
 			for(j in steps){
@@ -147,7 +160,8 @@ function doSteps(){
 				steps[j].before.removeItem(l);
 			}
 
-			abc.removeItem(l);
+			steps[l].done = true;
+			//abc.removeItem(l);
 
 			break;
 		}
@@ -155,18 +169,66 @@ function doSteps(){
 
 	//Output/Display
 	out+="Current Steps: "+totalSteps.join("")+"<br><br>";
+
+	out+="<div class='header'> Step\t\t|\t\tSteps to complete first</div>";
+
 	for(i in steps){
-
-		out+=JSON.stringify(steps[i]["before"])+" <b>"+i+"</b> "+JSON.stringify(steps[i]["after"])+"<br>";
+		out+="<div class='step_a "+((steps[i].done)?"complete":"")+"'>";
+		out+="<b>"+i+"</b>\t\t|\t\t"+steps[i]["before"].join(" ");
+		out+="</div>";
 	}
+	out+="<hr />";
 
-	document.getElementById("out").innerHTML = out;
+	document.getElementById("out1").innerHTML = out;
 
-	doSteps();
+	if(recursive) doSteps(recursive);
 }
 
-function doSteps2(){
+function doSteps2(recursive){
+	secondsPassed++;
 
+	if(secondsPassed>=10000){
+		return;
+	}
+
+	var i,j,k;
+	var out = '';
+	//var currStep = "-";
+
+	for(j=0;j<nWorkers;j++){
+		for(i=0;i<abc.length;i++){
+			var l = abc[i].toUpperCase();
+			if(steps[l].before.length == 0 && !steps[l].done){ //do this step first
+				totalSteps.push(l);
+				//currStep = l;
+				for(j in steps){
+					if(j.toString().toUpperCase() == l) continue;
+					steps[j].before.removeItem(l);
+				}
+
+				steps[l].done = true;
+				//abc.removeItem(l);
+
+				break;
+			}
+		}
+	}
+
+	//Output/Display
+	out+="Current Steps: "+totalSteps.join("")+"<br><br>";
+
+	out+="<div class='header'> Step\t\t|\t\tSteps to complete first</div>";
+
+	for(i in steps){
+		out+="<div class='step_a "+((steps[i].done)?"complete":"")+"'>";
+		out+="<b>"+i+"</b>\t\t|\t\t"+steps[i]["before"].join(" ");
+		out+="</div>";
+	}
+	out+="<hr />";
+
+	document.getElementById("out1").innerHTML = out;
+
+	if(recursive) doSteps(recursive);
 }
 
 Array.prototype.removeItem = function(item){
@@ -179,4 +241,4 @@ Array.prototype.removeItem = function(item){
 	return this;
 };
 
-//genSteps();
+genSteps();
