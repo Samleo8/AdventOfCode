@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+	<head>
+		<meta charset="utf-8">
+		<title>AoC 6</title>
+		<style>
+			.coord{
+				position:absolute;
+				width: 2px;
+				height: 2px;
+				background: blue;
+			}
+
+			div#out1{
+				position:absolute;
+				top:4000px;
+			}
+
+			table{
+				border-collapse:collapse;
+				border: 1px solid black;
+			}
+
+			td{
+				border:1px solid black;
+				width:10px;
+				height:10px;
+				font-size:10px;
+			}
+
+			td.original{
+				background: yellow;
+			}
+			td.unique{
+				background:aliceblue;
+			}
+			td.duplicate{
+				background:red;
+			}
+
+			div#tooltip{
+				position:fixed;
+				border:2px solid blue;
+				background:aliceblue;
+				padding:10px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="tooltip"></div>
+		<div id="out"></div>
+		<div id="out2"></div>
+		<script type="text/javascript" src="6.js"></script>
+	</body>
+</html>
