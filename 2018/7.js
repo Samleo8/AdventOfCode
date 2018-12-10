@@ -1,3 +1,13 @@
+var order2 = [
+	["C","A"],
+	["C","F"],
+	["A","B"],
+	["A","D"],
+	["B","E"],
+	["D","E"],
+	["F","E"]
+];
+
 var order = [
 	["A","N"], //x then y
 	["P","R"],
@@ -106,8 +116,10 @@ var secondsPassed = 0;
 var totalSteps = [], totalSteps2 = [];
 var steps = {}; //"letter":{"before":[array of letters to do before], "after":[array of letters to do after]}
 var steps2 = {};
+//var abc = "abcdef".toUpperCase().split("");
 var abc = "abcdefghijklmnopqrstuvwxyz".toUpperCase().split("");
 
+var secondsIncrement=60;
 var nWorkers = 5;
 var workerActive = [];
 
@@ -125,6 +137,7 @@ function genSteps(){
 
 	document.getElementById('answer2').innerHTML = "";
 	document.getElementById('out2').innerHTML = "";
+	document.getElementById('out3').innerHTML = "";
 
 	//Parse the input
 	var i,j;
@@ -137,7 +150,7 @@ function genSteps(){
 		steps2[abc[i].toUpperCase()] = {
 			"before":[],
 			"done":false,
-			"secondsNeeded":i+61,
+			"secondsNeeded":parseInt(i+1+secondsIncrement),
 			"secondsUsed":0,
 			"workerID":-1
 		};
@@ -148,6 +161,7 @@ function genSteps(){
 		var second = order[i][1];
 
 		steps[second].before.push(first);
+		steps2[second].before.push(first);
 	}
 
 	//Set workerActive to all "-1" (ie. not active)
@@ -157,7 +171,7 @@ function genSteps(){
 }
 
 function doSteps(recursive){
-	if(totalSteps.length==26){
+	if(totalSteps.length==abc.length){
 		document.getElementById('answer1').innerHTML = "ANSWER: <b>"+totalSteps.join("")+"</b>";
 		return;
 	}
@@ -168,7 +182,7 @@ function doSteps(recursive){
 
 	for(i=0;i<abc.length;i++){
 		var l = abc[i].toUpperCase();
-		if(steps[l].before.length == 0 && !steps[l].done){ //do this step first
+		if(steps[l].before.length == 0 && !steps[l].done){ //do this ["first
 			totalSteps.push(l);
 
 			for(j in steps){
@@ -201,9 +215,8 @@ function doSteps(recursive){
 }
 
 function doSteps2(recursive){
-	secondsPassed++;
+	if(totalSteps2.length==abc.length || secondsPassed>=10000){
 
-	if(totalSteps2.length==26 || secondsPassed>=10000){
 		return;
 	}
 
@@ -214,7 +227,8 @@ function doSteps2(recursive){
 		if(workerActive[j] != -1){ //worker is active
 			//check if he's actually done with his work
 			var l = workerActive[j].toUpperCase();
-			if(steps2[l].secondsUsed == steps2[l].secondsNeeded){ //Yay! He's done!
+			if(steps2[l].secondsUsed == steps2[l].secondsNeeded && !steps2[l].done){ //Yay! He's done (and wasn't done before))!
+				console.log("Worker",j,"complete with step",l);
 				totalSteps2.push(l);
 
 				for(i in steps2){
@@ -222,18 +236,27 @@ function doSteps2(recursive){
 					steps2[i].before.removeItem(l);
 				}
 
+				workerActive[j] = -1;
 				steps2[l].done = true;
 				steps2[l].workerID = -1;
+				j--; continue; //allow worker to do sth else immediately
 			}
 			else{ //Keep going...
+				console.log("Worker",j,"continuing with step",l);
 				steps2[l].secondsUsed++;
 			}
 		}
 		else{ //worker is not active
 			for(i=0;i<abc.length;i++){ //check if he can do sth
 				var l = abc[i].toUpperCase();
-				if(steps2[l].before.length == 0 && !steps2[l].done && steps2[l].workerID==-1){ //do this step first
+				if(steps2[l].before.length == 0 && !steps2[l].done && steps2[l].workerID==-1){ //do this ["first
+					console.log("Worker",j,"will now begin with step",l);
 
+					workerActive[j] = l;
+					steps2[l].workerID = j;
+					steps2[l].done = false;
+
+					steps2[l].secondsUsed=1;
 					break;
 				}
 			}
@@ -241,20 +264,26 @@ function doSteps2(recursive){
 	}
 
 	//Output/Display
-	out+="Current Steps: "+totalSteps2.join("")+"<br><br>";
+	out+="<div>Seconds Passed: "+secondsPassed+"\t\t|\t\tCurrent Steps: "+totalSteps2.join("")+"</div>";
 
-	out+="<div class='header'> Step\t\t|\t\tSteps to complete first</div>";
+	out+="<table class='header'><tr><th>Step</th><th>Progress</th><th>Steps to complete first</th></tr>";
 
 	for(i in steps2){
-		out+="<div class='step_a "+((steps[i].done)?"complete":"")+"'>";
-		out+="<b>"+i+"</b>\t\t|\t\t"+steps[i]["before"].join(" ");
-		out+="</div>";
+		out+="<tr class='"+((steps2[i].done)?"complete":"")+"'>";
+		out+="<td><b>"+i+"</b></td>"; //Step
+		out+="<td>"; //Progress
+			out+=(steps2[i].done)?"Complete":((steps2[i].secondsUsed!=0)?(steps2[i].secondsUsed+"/"+steps2[i].secondsNeeded):"Not started");
+		out+="</td>";
+		out+="<td>"+steps2[i]["before"].join(" ")+"</td>"; //Steps to complete first
+		out+="</tr>";
 	}
 	out+="<hr />";
 
-	document.getElementById("out1").innerHTML = out;
+	document.getElementById("out2").innerHTML = out;
 
-	if(recursive) doSteps(recursive);
+	secondsPassed++;
+
+	if(recursive) doSteps2(recursive);
 }
 
 Array.prototype.removeItem = function(item){
