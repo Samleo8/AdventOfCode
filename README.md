@@ -13,3 +13,5 @@ Codes used for [Advent of Code](http://adventofcode.com/ "Advent of Code").
 
 [Day 6](https://samleo8.github.io/AdventOfCode/6.html "Day 6")
 
+[Day 7](https://samleo8.github.io/AdventOfCode/7.html "Day 7")
+
