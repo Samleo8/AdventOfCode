@@ -103,17 +103,22 @@ var order = [
 ]
 
 var secondsPassed = 0;
-var totalSteps = [];
+var totalSteps = [], totalSteps2 = [];
 var steps = {}; //"letter":{"before":[array of letters to do before], "after":[array of letters to do after]}
+var steps2 = {};
 var abc = "abcdefghijklmnopqrstuvwxyz".toUpperCase().split("");
 
 var nWorkers = 5;
+var workerActive = [];
 
 function genSteps(){
 	//Reset
 	totalSteps = [];
+	totalSteps2 = [];
+
 	secondsPassed = 0;
 	steps = {};
+	steps2 = {};
 
 	document.getElementById('answer1').innerHTML = "";
 	document.getElementById('out1').innerHTML = "";
@@ -126,9 +131,15 @@ function genSteps(){
 	for(i=0;i<abc.length;i++){
 		steps[abc[i].toUpperCase()] = {
 			"before":[],
+			"done":false
+		};
+
+		steps2[abc[i].toUpperCase()] = {
+			"before":[],
 			"done":false,
 			"secondsNeeded":i+61,
-			"secondsUsed":0
+			"secondsUsed":0,
+			"workerID":-1
 		};
 	}
 
@@ -137,6 +148,11 @@ function genSteps(){
 		var second = order[i][1];
 
 		steps[second].before.push(first);
+	}
+
+	//Set workerActive to all "-1" (ie. not active)
+	for(i=0;i<nWorkers;i++){
+		workerActive[i] = -1;
 	}
 }
 
@@ -148,20 +164,20 @@ function doSteps(recursive){
 
 	var i,j,k;
 	var out = '';
-	//var currStep = "-";
+
 
 	for(i=0;i<abc.length;i++){
 		var l = abc[i].toUpperCase();
 		if(steps[l].before.length == 0 && !steps[l].done){ //do this step first
 			totalSteps.push(l);
-			//currStep = l;
+
 			for(j in steps){
 				if(j.toString().toUpperCase() == l) continue;
 				steps[j].before.removeItem(l);
 			}
 
 			steps[l].done = true;
-			//abc.removeItem(l);
+
 
 			break;
 		}
@@ -187,39 +203,49 @@ function doSteps(recursive){
 function doSteps2(recursive){
 	secondsPassed++;
 
-	if(secondsPassed>=10000){
+	if(totalSteps2.length==26 || secondsPassed>=10000){
 		return;
 	}
 
 	var i,j,k;
 	var out = '';
-	//var currStep = "-";
 
-	for(j=0;j<nWorkers;j++){
-		for(i=0;i<abc.length;i++){
-			var l = abc[i].toUpperCase();
-			if(steps[l].before.length == 0 && !steps[l].done){ //do this step first
-				totalSteps.push(l);
-				//currStep = l;
-				for(j in steps){
-					if(j.toString().toUpperCase() == l) continue;
-					steps[j].before.removeItem(l);
+	for(j=0;j<workerActive.length;j++){
+		if(workerActive[j] != -1){ //worker is active
+			//check if he's actually done with his work
+			var l = workerActive[j].toUpperCase();
+			if(steps2[l].secondsUsed == steps2[l].secondsNeeded){ //Yay! He's done!
+				totalSteps2.push(l);
+
+				for(i in steps2){
+					if(i.toString().toUpperCase() == l) continue;
+					steps2[i].before.removeItem(l);
 				}
 
-				steps[l].done = true;
-				//abc.removeItem(l);
+				steps2[l].done = true;
+				steps2[l].workerID = -1;
+			}
+			else{ //Keep going...
+				steps2[l].secondsUsed++;
+			}
+		}
+		else{ //worker is not active
+			for(i=0;i<abc.length;i++){ //check if he can do sth
+				var l = abc[i].toUpperCase();
+				if(steps2[l].before.length == 0 && !steps2[l].done && steps2[l].workerID==-1){ //do this step first
 
-				break;
+					break;
+				}
 			}
 		}
 	}
 
 	//Output/Display
-	out+="Current Steps: "+totalSteps.join("")+"<br><br>";
+	out+="Current Steps: "+totalSteps2.join("")+"<br><br>";
 
 	out+="<div class='header'> Step\t\t|\t\tSteps to complete first</div>";
 
-	for(i in steps){
+	for(i in steps2){
 		out+="<div class='step_a "+((steps[i].done)?"complete":"")+"'>";
 		out+="<b>"+i+"</b>\t\t|\t\t"+steps[i]["before"].join(" ");
 		out+="</div>";
