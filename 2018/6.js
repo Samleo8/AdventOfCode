@@ -388,7 +388,7 @@ function displayCoordinates(){
 		ele.style.top = coord[i].y+"px";
 		ele.style.left = coord[i].x+"px";
 
-		//document.getElementById("out").appendChild(ele);
+		document.getElementById("out").appendChild(ele);
 	}
 
 	var mn = 10000,mn_i=-1;
@@ -475,7 +475,7 @@ function displayCoordinates(){
 		}
 		tble.appendChild(tr);
 	}
-	//document.getElementById("out2").appendChild(tble);
+	document.getElementById("out2").appendChild(tble);
 
 	for(i in infinities){
 		ele = document.getElementsByClassName("id_"+i.toString());
