@@ -1,4 +1,4 @@
-stars = [
+var stars = [
 	{
 		"position":[-30302,  30614],
 		"velocity":[ 3, -3],
@@ -1368,3 +1368,166 @@ stars = [
 		"velocity":[ 2,  3],
 	}
 ];
+
+var stars_original = JSON.stringify(stars);
+
+var pos_bounds = {
+	"x":{
+		"min":100000,
+		"max":-100000
+	},
+	"y":{
+		"min":100000,
+		"max":-100000
+	}
+}
+var secondsUsed = 0;
+
+function setSimulationParams(param){
+	var opts = document.getElementById(param).getElementsByTagName("option");
+	for(i=0;i<opts.length;i++){
+		if(opts[i].selected){
+			canvas[param] = parseInt(opts[i].value);
+			break;
+		}
+	}
+
+	if(param=="scale"){
+		canvas.draw();
+	}
+}
+
+function resetSimulation(){
+	stars = JSON.parse(stars_original);
+	secondsUsed = 0;
+	canvas.pause();
+	canvas.draw();
+}
+
+//We'll be using canvas instead of divs this time
+/*============CANVAS HANDLING==============*/
+var Canvas = function(){
+	this.canvasActivated = false;
+	this.scale = 1;
+
+	this.init = function(){
+		this.canvas = document.getElementById("canvas");
+		this.ctx = canvas.getContext('2d');
+
+		this.outDiv = document.getElementById("out");
+
+		this.clear();
+	}
+
+	//Resize to fit in all the stars
+	this.resize = function(w,h,clr){
+		if(clr) this.clear();
+		if(!this.canvasActivated) return;
+
+		this.canvas.width = w;
+		this.canvas.height = h;
+	}
+
+	//Draw the current positions of the stars on canvas
+	/*
+	Type:	increment		|		exact
+	------------------------------------------------
+			move forward	|	skip to the
+			by `second`		|	`second`-th
+			seconds			|	second
+	*/
+	this.draw = function(type, second){
+		if(type == null || typeof type == "undefined") type = "increment";
+		if(second == null || typeof second == "undefined") second = 0;
+
+		if(type=="exact"){
+			stars = JSON.parse(stars_original);
+		}
+
+		//Move the stars
+		for(i=0;i<stars.length;i++){
+			stars[i].position[0] += second*stars[i].velocity[0];
+			stars[i].position[1] += second*stars[i].velocity[1];
+		}
+
+		//Then find the bounds and resize
+		pos_bounds.x.min = pos_bounds.y.min =  100000000
+		pos_bounds.x.max = pos_bounds.y.max = -100000000
+
+		//==Find out the minimum and maximum bounds
+		for(i=0;i<stars.length;i++){
+			pos_bounds.x.min = Math.min(stars[i].position[0],pos_bounds.x.min);
+			pos_bounds.y.min = Math.min(stars[i].position[1],pos_bounds.y.min);
+
+			pos_bounds.x.max = Math.max(stars[i].position[0],pos_bounds.x.max);
+			pos_bounds.y.max = Math.max(stars[i].position[1],pos_bounds.y.max);
+		}
+
+		//==Resize
+		this.resize(
+			pos_bounds.x.max-pos_bounds.x.min,
+			pos_bounds.y.max-pos_bounds.y.min,
+			true
+		);
+
+		//Plot (and scale down based on bounds)!
+		for(i=0;i<stars.length;i++){
+			this.drawPixel(stars[i].position[0]-pos_bounds.x.min,stars[i].position[1]-pos_bounds.y.min);
+		}
+
+		if(type=="exact") secondsUsed = second;
+		else secondsUsed += second;
+		document.getElementById("secondsPassed").innerHTML = secondsUsed;
+	}
+
+	//Draw a single pixel
+	this.drawPixel = function(x,y){
+		if(this.canvasActivated){ //HTML5 Canvas
+			this.ctx.fillRect(x/this.scale,y/this.scale,1,1);
+		}
+		else{ //Pure CSS
+			var ele = document.createElement("div");
+			ele.style.top = y/this.scale+"px";
+			ele.style.left = x/this.scale+"px";
+			ele.className = "star";
+
+			this.outDiv.appendChild(ele);
+		}
+	}
+
+	//Play an animation!
+	this.timer = null;
+	this.timer_increment = 100;
+	this.timer_interval = 100;
+
+	this.play = function(){
+		//var self = this;
+		this._paused = false;
+		if(this.timer){
+			clearInterval(this.timer);
+		}
+
+		this.timer = setInterval(function(){
+			this.draw("increment",this.timer_increment);
+		}.bind(this),this.timer_interval);
+	}
+
+	this.pause = function(){
+		this._paused = true;
+		clearInterval(this.timer);
+	}
+
+	//Clear canvas
+	this.clear = function(){
+		if(this.canvasActivated)
+			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		else
+			this.outDiv.innerHTML = "";
+	}
+
+	this.init();
+}
+
+window.onload = function(){
+	canvas = new Canvas();
+}

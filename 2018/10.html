@@ -2,9 +2,112 @@
 <html lang="en" dir="ltr">
 	<head>
 		<meta charset="utf-8">
-		<title></title>
+		<title>AoC 10</title>
+		<style>
+			html{
+				background:#220101;
+				font-family:Calibri;
+				margin:0; padding:0;
+			}
+			body{
+				margin:0; padding:0;
+			}
+
+			#main{
+				position:relative;
+			}
+
+			.y-separator{
+				display:block;
+				clear:both;
+				padding-top:5px;
+				padding-bottom:5px;
+			}
+
+			.x-separator{
+				display:inline;
+				margin-left:5px;
+				border-right:1px solid black;
+				margin-right:10px;
+			}
+
+			#canvas{
+				margin:10px;
+			}
+
+			#controls{
+				background:azure;
+				padding: 10px;
+				border-bottom: 1px solid black;
+			}
+
+			#out{
+				position:absolute;
+				top:10px;
+			}
+
+			.star{
+				position:absolute;
+				width:2px;
+				height:2px;
+				background: yellow;
+			}
+		</style>
 	</head>
 	<body>
-		<<canvas id="canvas" width="10000" height="10000"></canvas>
+		<div id="controls">
+			<div>
+				<input type="button" value="Play" onclick="javascript:canvas.play()">
+				<input type="button" value="Pause" onclick="javascript:canvas.pause()">
+				<input type="button" value="Reset" onclick="resetSimulation()">
+
+				<span class="x-separator"></span>
+
+				Seconds Passed: <span id="secondsPassed">0</span>
+
+				<span class="x-separator"></span>
+
+				Increment by
+				<select id="timer_increment" onchange="javascript:setSimulationParams(this.id)">
+					<option value="1">1</option>
+					<option value="10">10</option>
+					<option value="100" selected>100</option>
+					<option value="1000">1000</option>
+				</select>
+				<span style="padding-left:5px;"></span>Elf seconds
+
+				<span class="x-separator"></span>
+
+				Canvas Compactness:
+				<select id="scale" onchange="javascript:setSimulationParams(this.id)">
+					<option value="1" selected>1</option>
+					<option value="10">10</option>
+					<option value="100">100</option>
+				</select>
+			</div>
+			<div class="y-separator"></div>
+			<div>
+				<input type="button" value="-1000 second" onclick="javascript:canvas.draw('increment',-1000)">
+				<input type="button" value="-100 second" onclick="javascript:canvas.draw('increment',-100)">
+				<input type="button" value="-10 second" onclick="javascript:canvas.draw('increment',-10)">
+				<input type="button" value="-1 second" onclick="javascript:canvas.draw('increment',-1)">
+				<input type="button" value="Reset" onclick="resetSimulation()">
+				<input type="button" value="+1 second" onclick="javascript:canvas.draw('increment',1)">
+				<input type="button" value="+10 second" onclick="javascript:canvas.draw('increment',10)">
+				<input type="button" value="+100 second" onclick="javascript:canvas.draw('increment',100)">
+				<input type="button" value="+1000 second" onclick="javascript:canvas.draw('increment',1000)">
+			</div>
+		</div>
+		<div id="main">
+			<!--
+			<canvas id="canvas">
+				Unfortunately, your browser doesn't support canvas.
+			</canvas>
+		-->
+			<div id="out">
+
+			</div>
+		</div>
+		<script src="10.js"></script>
 	</body>
 </html>
