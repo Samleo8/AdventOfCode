@@ -1424,8 +1424,8 @@ var Canvas = function(){
 		if(clr) this.clear();
 		if(!this.canvasActivated) return;
 
-		this.canvas.width = w;
-		this.canvas.height = h;
+		this.canvas.width = w+10;
+		this.canvas.height = h+10;
 	}
 
 	//Draw the current positions of the stars on canvas
@@ -1483,6 +1483,7 @@ var Canvas = function(){
 	//Draw a single pixel
 	this.drawPixel = function(x,y){
 		if(this.canvasActivated){ //HTML5 Canvas
+			this.ctx.fillStyle="#FFFF00";
 			this.ctx.fillRect(x/this.scale,y/this.scale,1,1);
 		}
 		else{ //Pure CSS
