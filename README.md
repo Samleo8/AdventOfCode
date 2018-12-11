@@ -1,6 +1,6 @@
 # Advent of Code
 
-2018: [![https://adventofcode.com/2018](https://img.shields.io/badge/solved-12%20of%2018-orange.svg)](https://adventofcode.com/2018)
+2018: [![https://adventofcode.com/2018](https://img.shields.io/badge/solved-14%20of%2024-orange.svg)](https://adventofcode.com/2018)
 
 Codes used for [Advent of Code](http://adventofcode.com/ "Advent of Code").
 
@@ -14,3 +14,5 @@ Codes used for [Advent of Code](http://adventofcode.com/ "Advent of Code").
 [Day 6](https://samleo8.github.io/AdventOfCode/2018/6.html "Day 6")
 
 [Day 7](https://samleo8.github.io/AdventOfCode/2018/7.html "Day 7")
+
+[Day 7](https://samleo8.github.io/AdventOfCode/2018/10.html "Day 10")
