@@ -7,12 +7,14 @@ Codes used for [Advent of Code](http://adventofcode.com/ "Advent of Code").
 [![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/uses-html.svg)](https://samleo8.github.io/AdventOfCode/)
 
 ## Visualisations (2018)
+[Day 10](https://samleo8.github.io/AdventOfCode/2018/10.html "Day 10")
+
 [Day 3](https://samleo8.github.io/AdventOfCode/2018/3.html "Day 3")
+
+[Day 7](https://samleo8.github.io/AdventOfCode/2018/7.html "Day 7")
 
 [Day 5](https://samleo8.github.io/AdventOfCode/2018/5.html "Day 5")
 
 [Day 6](https://samleo8.github.io/AdventOfCode/2018/6.html "Day 6")
 
-[Day 7](https://samleo8.github.io/AdventOfCode/2018/7.html "Day 7")
-
-[Day 7](https://samleo8.github.io/AdventOfCode/2018/10.html "Day 10")
+(Order of importance/usefulness)
