@@ -1,6 +1,6 @@
 # Advent of Code
 
-2018: [![https://adventofcode.com/2018](https://img.shields.io/badge/solved-14%20of%2024-orange.svg)](https://adventofcode.com/2018)
+2018: [![https://adventofcode.com/2018](https://img.shields.io/badge/solved-16%20of%2024-orange.svg)](https://adventofcode.com/2018)
 
 Codes used for [Advent of Code](http://adventofcode.com/ "Advent of Code").
 
