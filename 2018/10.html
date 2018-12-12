@@ -4,9 +4,13 @@
 		<meta charset="utf-8">
 		<title>AoC 10</title>
 		<style>
+			*{
+				font-family:Avenir, Calibri;
+				font-size: 15px;
+			}
+
 			html{
 				background:#220101;
-				font-family:Calibri;
 				margin:0; padding:0;
 			}
 			body{
@@ -52,14 +56,47 @@
 				height:2px;
 				background: yellow;
 			}
+
+			.button {
+				-webkit-touch-callout: none; /* iOS Safari */
+				-webkit-user-select: none; /* Safari */
+				-khtml-user-select: none; /* Konqueror HTML */
+				-moz-user-select: none; /* Firefox */
+				-ms-user-select: none; /* Internet Explorer/Edge */
+				user-select: none; /* Non-prefixed version, currently
+								supported by Chrome and Opera */
+
+				background-color: #008CBA; /* Green */
+				border: 2px solid #008CBA;
+				color: white;
+				padding: 5px 15px;
+				text-align: center;
+				text-decoration: none;
+				display: inline-block;
+				margin: 4px 2px;
+				cursor: pointer;
+				-webkit-transition-duration: 0.4s; /* Safari */
+				transition-duration: 0.4s;
+			}
+
+			.button:hover{
+				background-color: white; /* Green */
+				border: 2px solid #008CBA;
+				color: #008CBA;
+			}
+
+			.button:active{
+				position:relative;
+				top:1px;
+			}
 		</style>
 	</head>
 	<body>
 		<div id="controls">
 			<div>
-				<input type="button" value="Play" onclick="javascript:canvas.play()">
-				<input type="button" value="Pause" onclick="javascript:canvas.pause()">
-				<input type="button" value="Reset" onclick="resetSimulation()">
+				<div class="button" onclick="javascript:canvas.play()">Play</div>
+				<div class="button" onclick="javascript:canvas.pause()">Pause</div>
+				<div class="button" onclick="javascript:resetSimulation()">Stop</div>
 
 				<span class="x-separator"></span>
 
@@ -87,15 +124,15 @@
 			</div>
 			<div class="y-separator"></div>
 			<div>
-				<input type="button" value="-1000 second" onclick="javascript:canvas.draw('increment',-1000)">
-				<input type="button" value="-100 second" onclick="javascript:canvas.draw('increment',-100)">
-				<input type="button" value="-10 second" onclick="javascript:canvas.draw('increment',-10)">
-				<input type="button" value="-1 second" onclick="javascript:canvas.draw('increment',-1)">
-				<input type="button" value="Reset" onclick="resetSimulation()">
-				<input type="button" value="+1 second" onclick="javascript:canvas.draw('increment',1)">
-				<input type="button" value="+10 second" onclick="javascript:canvas.draw('increment',10)">
-				<input type="button" value="+100 second" onclick="javascript:canvas.draw('increment',100)">
-				<input type="button" value="+1000 second" onclick="javascript:canvas.draw('increment',1000)">
+				<div class="button" onclick="javascript:canvas.draw('increment',-1000)">-1000 seconds</div>
+				<div class="button" onclick="javascript:canvas.draw('increment',-100)">-100 seconds</div>
+				<div class="button" onclick="javascript:canvas.draw('increment',-10)">-10 seconds</div>
+				<div class="button" onclick="javascript:canvas.draw('increment',-1)">-1 second</div>
+				<div class="button" onclick="resetSimulation()">Reset</div>
+				<div class="button" onclick="javascript:canvas.draw('increment',1)">+1 second</div>
+				<div class="button" onclick="javascript:canvas.draw('increment',10)">+10 seconds</div>
+				<div class="button" onclick="javascript:canvas.draw('increment',100)">+100 seconds</div>
+				<div class="button" onclick="javascript:canvas.draw('increment',1000)">+1000 seconds</div>
 			</div>
 		</div>
 		<div id="main">
