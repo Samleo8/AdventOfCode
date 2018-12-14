@@ -116,11 +116,17 @@ var secondsPassed = 0;
 var totalSteps = [], totalSteps2 = [];
 var steps = {}; //"letter":{"before":[array of letters to do before], "after":[array of letters to do after]}
 var steps2 = {};
-//var abc = "abcdef".toUpperCase().split("");
+//*
 var abc = "abcdefghijklmnopqrstuvwxyz".toUpperCase().split("");
 
 var secondsIncrement=60;
 var nWorkers = 5;
+//*/
+/*
+var abc = "abcdef".toUpperCase().split("")
+vvar secondsIncrement = 0
+var nWorkers = 2;
+//*/
 var workerActive = [];
 
 function genSteps(){
@@ -216,7 +222,6 @@ function doSteps(recursive){
 
 function doSteps2(recursive){
 	if(totalSteps2.length==abc.length || secondsPassed>=10000){
-
 		return;
 	}
 
@@ -227,8 +232,9 @@ function doSteps2(recursive){
 		if(workerActive[j] != -1){ //worker is active
 			//check if he's actually done with his work
 			var l = workerActive[j].toUpperCase();
-			if(steps2[l].secondsUsed == steps2[l].secondsNeeded && !steps2[l].done){ //Yay! He's done (and wasn't done before))!
+			if(steps2[l].secondsUsed >= (steps2[l].secondsNeeded) && !steps2[l].done){ //Yay! He's done (and wasn't done before))!
 				console.log("Worker",j,"complete with step",l);
+
 				totalSteps2.push(l);
 
 				for(i in steps2){
@@ -239,6 +245,9 @@ function doSteps2(recursive){
 				workerActive[j] = -1;
 				steps2[l].done = true;
 				steps2[l].workerID = -1;
+
+				steps2[l].secondsUsed = steps2[l].secondsNeeded;
+
 				j--; continue; //allow worker to do sth else immediately
 			}
 			else{ //Keep going...
