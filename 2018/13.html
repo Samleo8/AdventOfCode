@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+	<head>
+		<meta charset="utf-8">
+		<title>AoC 13</title>
+		<style>
+			*{
+				font-family:Avenir, Calibri;
+				font-size: 15px;
+			}
+
+			html{
+				background:#220101;
+				margin:0; padding:0;
+			}
+			body{
+				margin:0; padding:0;
+			}
+
+			#main{
+				position:relative;
+			}
+
+			.y-separator{
+				display:block;
+				clear:both;
+				padding-top:5px;
+				padding-bottom:5px;
+			}
+
+			.x-separator{
+				display:inline;
+				margin-left:5px;
+				border-right:1px solid black;
+				margin-right:10px;
+			}
+
+			#controls{
+				background:azure;
+				padding: 10px;
+				border-bottom: 1px solid black;
+			}
+
+			#out{
+				position:absolute;
+				top:10px;
+			}
+
+			.star{
+				position:absolute;
+				width:2px;
+				height:2px;
+				background: yellow;
+			}
+
+			.button {
+				-webkit-touch-callout: none; /* iOS Safari */
+				-webkit-user-select: none; /* Safari */
+				-khtml-user-select: none; /* Konqueror HTML */
+				-moz-user-select: none; /* Firefox */
+				-ms-user-select: none; /* Internet Explorer/Edge */
+				user-select: none; /* Non-prefixed version, currently
+								supported by Chrome and Opera */
+
+				background-color: #008CBA; /* Green */
+				border: 2px solid #008CBA;
+				color: white;
+				padding: 5px 15px;
+				text-align: center;
+				text-decoration: none;
+				display: inline-block;
+				margin: 4px 2px;
+				cursor: pointer;
+				-webkit-transition-duration: 0.4s; /* Safari */
+				transition-duration: 0.4s;
+			}
+
+			.button:hover{
+				background-color: white; /* Green */
+				border: 2px solid #008CBA;
+				color: #008CBA;
+			}
+
+			.button:active{
+				position:relative;
+				top:1px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="controls">
+			<div class="button">+1 Step</div> <div class="button">+2 Step</div> <div class="button">Until crash</div>
+		</div>
+		<div id="out"></div>
+
+		<script ></script>
+	</body>
+</html>
