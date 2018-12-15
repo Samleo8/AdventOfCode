@@ -54,25 +54,32 @@ function init(){
 					goblins.push({"x":x,"y":y});
 					map[y][x] = {
 						"type":"goblin",
-						"passed":false
+						"passed":false,
+						"text":"G",
+						"unit_id":goblins.length-1
 					}
 					break;
 				case "E":
 					elves.push({"x":x,"y":y});
 					map[y][x] = {
-						"type":"elves",
-						"passed":false
+						"type":"elf",
+						"passed":false,
+						"text":"E",
+						"unit_id":elves.length-1
+					}
+					break;
+				case "#":
+					map[y][x] = {
+						"type":"wall",
+						"text":""
 					}
 					break;
 				case ".":
-					map[x][y] = {
+				default:
+					map[y][x] = {
 						"type":"empty",
+						"text":"",
 						"passed":false
-					}
-					break;
-				case ".":
-					map[x][y] = {
-						"type":"empty"
 					}
 					break;
 			}
@@ -91,20 +98,7 @@ function outputMap(){
 			var td = document.createElement("td");
 			td.id = "td_"+x+"_"+y;
 
-			switch(map[y][x].type){
-				case "elves":
-					td.innerHTML = "E";
-					break;
-				case "G": case "g":
-					td.className = "goblin";
-					break;
-				case "#":
-					td.className = "wall";
-					break;
-				case ".":
-					td.className = "empty";
-					break;
-			}
+			td.innerHTML = map[y][x].text;
 
 			td.className = map[y][x].type;
 
