@@ -1,3 +1,4 @@
+/*
 var initial_state = "###..###....####.###...#..#...##...#..#....#.##.##.#..#.#..##.#####..######....#....##..#...#...#.#";
 
 var morphs = [
@@ -194,13 +195,100 @@ var morphs = [
     "indexes": []
   }
 ];
+//*/
 
-var str = JSON.parse(JSON.stringify(initial_state));
+//*
+var initial_state = "#..#.#..##......###...###";
+var morphs = [
+    {
+    	"query":"...##",
+    	"result":"#",
+    	"indexes":[]
+    },
+    {
+    	"query":"..#..",
+    	"result":"#",
+    	"indexes":[]
+    },
+    {
+    	"query":".#...",
+    	"result":"#",
+    	"indexes":[]
+    },
+    {
+    	"query":".#.#.",
+    	"result":"#",
+    	"indexes":[]
+    },
+    {
+    	"query":".#.##",
+    	"result":"#",
+    	"indexes":[]
+    },
+    {
+    	"query":".##..",
+    	"result":"#",
+    	"indexes":[]
+    },
+    {
+    	"query":".####",
+    	"result":"#",
+    	"indexes":[]
+    },
+    {
+    	"query":"#.#.#",
+    	"result":"#",
+    	"indexes":[]
+    },
+    {
+    	"query":"#.###",
+    	"result":"#",
+    	"indexes":[]
+    },
+    {
+    	"query":"##.#.",
+    	"result":"#",
+    	"indexes":[]
+    },
+    {
+    	"query":"##.##",
+    	"result":"#",
+    	"indexes":[]
+    },
+    {
+    	"query":"###..",
+    	"result":"#",
+    	"indexes":[]
+    },
+    {
+    	"query":"###.#",
+    	"result":"#",
+    	"indexes":[]
+    },
+    {
+    	"query":"####.",
+    	"result":"#",
+    	"indexes":[]
+    }
+];
+
+//*/
+
+var padding_no = 10; //number of extra "." we put in the back and front to look at
+var padding = genEmptyPots(padding_no);
+var str = '';
+
+function reset(){
+    str = JSON.parse(JSON.stringify(padding+initial_state+padding));
+
+    printOut();
+    printOut("&nbsp;0&nbsp;"+str+"<br>");
+}
 
 function performMorphs(){
-	console.log("INITIAL:",str);
+	console.log("INITIAL:\n",str);
 
-	var i,j;
+	var i,j,k;
 
 	//First find where all the indexes are supposed to be at
 	for(i=0;i<morphs.length;i++){
@@ -222,20 +310,86 @@ function performMorphs(){
 	}
 
 	//Then replace it with what is supposed to be the next generation
-	str = str.split("");
+	str = genEmptyPots(str.length).split("");
+    //str = str.split("");
 
 	for(i=0;i<morphs.length;i++){
 		for(j=0;j<morphs[i].indexes.length;j++){
-			str[ morphs[i].indexes[j] ] = morphs[i].result;
+            var qy = morphs[i].query.split("");
+            qy[2] = morphs[i].result;
+
+            { k=0;//for(k=-2;k<=2;k++){
+                str[ morphs[i].indexes[j]+k ] = qy[k+2];
+            }
 		}
 	}
 
 	str = str.join("");
 
-	console.log("POST-MORPH:",str);
+	console.log("POST-MORPH:\n",str);
+
+    printOut(str+"<br>");
 }
 
-i=20;
-while(i--){
-	performMorphs();
+function genEmptyPots(_howMany){
+    var _str = "";
+
+    for(var _i=0;_i<_howMany;_i++) _str+=".";
+
+    return _str;
 }
+
+var currGeneration = 0;
+var nGenerations=20;
+
+function allGenerations(){
+    reset();
+
+    for(_i=1;_i<=nGenerations;_i++){
+        printOut(((_i<10)?"&nbsp;":"")+_i+"&nbsp;");
+        performMorphs();
+    }
+
+    findChecksum();
+}
+
+function nextGeneration(){
+    if(currGeneration >= nGenerations){
+        return;
+    }
+
+    currGeneration++;
+
+    printOut(((currGeneration<10)?"&nbsp;":"")+currGeneration+"&nbsp;");
+    performMorphs();
+
+    if(currGeneration == nGenerations){
+        findChecksum();
+    }
+}
+
+function findChecksum(){
+    var sum = 0;
+    printOut("<br /><div>");
+    for(i=0;i<str.length;i++){
+        if(str[i] == "#"){
+            sum += i-padding_no;
+        }
+        //printOut(i-padding_no+"\t"+str[i]);
+        printOut(str[i]);
+    }
+    printOut("</div>");
+
+    printOut("<div>Sum: "+sum+"</div>");
+}
+
+function printOut(str){
+    if(str==null || typeof str=="undefined" || str==undefined || str==""){
+        document.getElementById("out").innerHTML = '';
+        return;
+    }
+
+    document.getElementById("out").innerHTML += str;
+}
+
+reset();

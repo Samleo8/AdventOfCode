@@ -34,6 +34,7 @@ input =[
 ]; //to improve efficiency, some of the entrances/exits have been blocked off because they lead to dead ends
 
 var map = [];
+var graph = [];
 var elves = []; //contains object of coordinates
 var goblins = []; //contains object of coordinates
 
@@ -43,6 +44,7 @@ function init(){
 	//Create the Map
 	for(i=0;i<input.length;i++){
 		map.push(input[i].split(""));
+		graph.push(input[i].split(""));
 	}
 
 	//Make the map objects of
@@ -58,6 +60,7 @@ function init(){
 						"text":"G",
 						"unit_id":goblins.length-1
 					}
+					graph[y][x] = 0;
 					break;
 				case "E":
 					elves.push({"x":x,"y":y});
@@ -67,12 +70,14 @@ function init(){
 						"text":"E",
 						"unit_id":elves.length-1
 					}
+					graph[y][x] = 0;
 					break;
 				case "#":
 					map[y][x] = {
 						"type":"wall",
 						"text":""
 					}
+					graph[y][x] = 0;
 					break;
 				case ".":
 				default:
@@ -81,12 +86,21 @@ function init(){
 						"text":"",
 						"passed":false
 					}
+					graph[y][x] = 1;
 					break;
 			}
 		}
 	}
 
 	outputMap();
+
+	{//for(){
+		searchEnemy(enemy_type,x,y);
+	}
+}
+
+function searchEnemy(enemy_type,x,y){
+	
 }
 
 function outputMap(){

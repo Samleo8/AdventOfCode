@@ -15,6 +15,10 @@ body{
 	color: azure;
 }
 
+.consolas{
+	font-family: Consolas;
+}
+
 table{
 	border-collapse: collapse;
 }
