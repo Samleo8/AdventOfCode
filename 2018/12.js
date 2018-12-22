@@ -1,4 +1,4 @@
-var rawInput = [
+/*var rawInput = [
     "...## => #",
     "..#.. => #",
     ".#... => #",
@@ -14,10 +14,49 @@ var rawInput = [
     "###.# => #",
     "####. => #"
 ];
+*/
 
-var initial_state = "#..#.#..##......###...###";
-var morphs = [];
+var rawInput = [
+    "..#.# => #",
+    "###.# => .",
+    "#.#.# => .",
+    ".#.#. => .",
+    "##... => #",
+    "...## => .",
+    ".##.# => .",
+    ".#... => #",
+    "####. => #",
+    "....# => .",
+    ".##.. => #",
+    ".#### => #",
+    "..### => .",
+    ".###. => #",
+    "##### => #",
+    "..#.. => #",
+    "#..#. => .",
+    "###.. => #",
+    "#..## => #",
+    "##.## => #",
+    "##..# => .",
+    ".#..# => #",
+    "#.#.. => #",
+    "#.### => #",
+    "#.##. => #",
+    "..... => .",
+    ".#.## => #",
+    "#...# => .",
+    "...#. => #",
+    "..##. => #",
+    "##.#. => #",
+    "#.... => ."
+];
+
+var initial_state = "###..###....####.###...#..#...##...#..#....#.##.##.#..#.#..##.#####..######....#....##..#...#...#.#";
 var matches = {};
+
+var timeToReset = false;
+
+var nGenerations= 50000000000; //20;
 
 function parseInput(){
     morphs = [];
@@ -27,82 +66,60 @@ function parseInput(){
     var arr = [];
     for(i=0;i<rawInput.length;i++){
         arr = rawInput[i].split(" => ");
-        matches[arr[0]] = arr[1];
-        morphs.push({
-            "query":arr[0],
-            "result":"",
-            "indexes":[]
-        });
+        if(arr[1]=="#") matches[arr[0].toString()] = arr[1];
     }
+
+    timeToReset = false;
 } parseInput();
 
-var padding_no = 10; //number of extra "." we put in the back and front to look at
-var padding = genEmptyPots(padding_no);
+var pre_padding_no = 10; //number of extra "." we put in the back look at
+var pre_padding = genEmptyPots(pre_padding_no);
 var str = [];
 
 function reset(){
-    str = JSON.parse(JSON.stringify(padding+initial_state+padding)).split("");
+    str = JSON.parse(JSON.stringify(pre_padding+initial_state));
+
+    currGeneration = 0;
 
     printOut();
-    printOut("&nbsp;0&nbsp;"+str.join("")+"<br>");
+    printOut("&nbsp;0&nbsp;"+str+"<br>");
+
+    timeToReset = false;
 }
 
-/*
 function performMorphs(){
-	console.log("INITIAL:\n",str);
+    var i, sub;
 
-	var i,j,k;
+    var new_str = [];
+    new_str.push("."); //first 2 new_str is "."
+    new_str.push(".");
 
-	//First find where all the indexes are supposed to be at
-	for(i=0;i<morphs.length;i++){
-		morphs[i].indexes = [];
+    var pots5 = genEmptyPots(5);
 
-		var str2 = str;
-
-		var arr = str2.split(morphs[i].query);
-
-		if(arr.length <= 1) continue; //Not found
-
-		var len = 0;
-
-		for(j=0;j<arr.length-1;j++){ //the last one has no query in between
-			len += arr[j].length;
-
-			morphs[i].indexes.push(2+len+5*j);
-		}
-	}
-
-	//Then replace it with what is supposed to be the next generation
-	str = genEmptyPots(str.length).split("");
-    //str = str.split("");
-
-	for(i=0;i<morphs.length;i++){
-		for(j=0;j<morphs[i].indexes.length;j++){
-            var qy = morphs[i].query.split("");
-            qy[2] = morphs[i].result;
-
-            { k=0;//for(k=-2;k<=2;k++){
-                str[ morphs[i].indexes[j]+k ] = qy[k+2];
-            }
-		}
-	}
-
-	str = str.join("");
-
-	console.log("POST-MORPH:\n",str);
-
-    printOut(str+"<br>");
-}
-*/
-
-function performMorphs(){
-    var i,j,k;
-
-    //First find where all the indexes are supposed to be at
-    for(i=0;i<morphs.length;i++){
-
+    //If the last five characters were 5 dots, it's pointless to extend; otherwise, we now have to look at at least 5 pots ahead
+    if(str.substr(str.length-6,5) != pots5){
+        str += pots5+".";
     }
 
+    //Perform the matching
+    for(i=2;i<str.length;i++){
+        sub = str.substr(i-2,5);
+        if(matches.hasOwnProperty(sub)){
+            new_str.push("#");
+        }
+        else{
+            new_str.push("."); //if there is no match, the plant is dead
+        }
+    }
+
+    if(str == new_str.join("")){
+        //Stop searching, the matches don't change anything anymore!
+        return true;
+    }
+    else{
+        str = new_str.join("");
+        return false;
+    }
 }
 
 function genEmptyPots(_howMany){
@@ -114,47 +131,85 @@ function genEmptyPots(_howMany){
 }
 
 var currGeneration = 0;
-var nGenerations=20;
 
-function allGenerations(){
-    reset();
+function allGenerations(n){
+    //If it's greater than 200, there's actually a pattern wherein there is a fixed number of "#"s that shift right; the checksum is thus calculatable
+    if(n>200){
+        reset();
+        var n1,n2,ans;
 
-    for(_i=1;_i<=nGenerations;_i++){
-        printOut(((_i<10)?"&nbsp;":"")+_i+"&nbsp;");
-        performMorphs();
+        nextGenerations(200);
+        n1 = findChecksum(); //checksum for 200
+        nextGenerations(100);
+        n2 = findChecksum(); //checksum for 300
+
+        ans = n1+(n2-n1)*(n-200)/100;
+        document.getElementById("out_checksum").innerHTML = "["+n+"] "+ans;
+
+        return ans;
     }
 
-    findChecksum();
+    reset();
+
+    var statusQuo;
+
+    for(currGeneration=1;currGeneration<=n;currGeneration++){
+        statusQuo = performMorphs();
+        printOut(((currGeneration<10)?"&nbsp;":"")+currGeneration+"&nbsp;"+str+"<br>");
+
+        if(statusQuo) break;
+    }
+
+    currGeneration = n;
+    return findChecksum();
 }
 
 function nextGeneration(){
+    if(timeToReset){
+        reset(); return;
+    }
+
     if(currGeneration >= nGenerations){
         return;
     }
 
     currGeneration++;
 
-    printOut(((currGeneration<10)?"&nbsp;":"")+currGeneration+"&nbsp;");
     performMorphs();
+    printOut(((currGeneration<10)?"&nbsp;":"")+currGeneration+"&nbsp;"+str+"<br>");
 
     if(currGeneration == nGenerations){
         findChecksum();
     }
 }
 
+function nextGenerations(n){
+    if(timeToReset){
+        reset(); return;
+    }
+
+    while(n--){
+        nextGeneration();
+    }
+}
+
 function findChecksum(){
+    if(timeToReset){
+        reset(); return;
+    }
+
     var sum = 0;
-    printOut("<br /><div>");
     for(i=0;i<str.length;i++){
         if(str[i] == "#"){
-            sum += i-padding_no;
+            sum += i-pre_padding_no;
         }
-        //printOut(i-padding_no+"\t"+str[i]);
-        printOut(str[i]);
     }
-    printOut("</div>");
 
-    printOut("<div>Sum: "+sum+"</div>");
+    document.getElementById("out_checksum").innerHTML = "["+currGeneration+"] "+sum;
+
+    timeToReset = false;
+
+    return sum;
 }
 
 function printOut(str){

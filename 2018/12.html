@@ -8,7 +8,23 @@
 	<body>
 		<div id="controls">
 			<div class="button" onclick="nextGeneration()">Next Generation</div>
-			<div class="button" onclick="allGenerations()">All Generations (20)</div>
+			<div class="button" onclick="nextGenerations(10)">Next 10 Generations</div>
+			<div class="button" onclick="nextGenerations(100)">Next 100 Generations</div>
+			<div class="button" onclick="nextGenerations(1000)">Next 1000 Generations</div>
+
+			<div class="y-separator"></div>
+
+			<div class="button" onclick="allGenerations(20)">All Generations (20)</div>
+			<div class="button" onclick="allGenerations(50000000000)">All Generations (50000000000)</div>
+
+			<div class="y-separator"></div>
+
+			<div class="button" onclick="findChecksum()">Find Checksum</div>
+			<div class="button" onclick="reset()">Reset</div>
+
+			<div class="x-separator"></div>
+
+			Checksum: <span id="out_checksum"></span>
 		</div>
 		<div class="y-separator"></div>
 		<div class="y-separator"></div>
