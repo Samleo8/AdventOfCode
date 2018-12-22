@@ -1,290 +1,53 @@
-/*
-var initial_state = "###..###....####.###...#..#...##...#..#....#.##.##.#..#.#..##.#####..######....#....##..#...#...#.#";
-
-var morphs = [
-  {
-    "query": "..#.#",
-    "result": "#",
-    "regex": "\\.\\.\\#\\.\\#",
-    "indexes": []
-  },
-  {
-    "query": "###.#",
-    "result": ".",
-    "regex": "\\#\\#\\#\\.\\#",
-    "indexes": []
-  },
-  {
-    "query": "#.#.#",
-    "result": ".",
-    "regex": "\\#\\.\\#\\.\\#",
-    "indexes": []
-  },
-  {
-    "query": ".#.#.",
-    "result": ".",
-    "regex": "\\.\\#\\.\\#\\.",
-    "indexes": []
-  },
-  {
-    "query": "##...",
-    "result": "#",
-    "regex": "\\#\\#\\.\\.\\.",
-    "indexes": []
-  },
-  {
-    "query": "...##",
-    "result": ".",
-    "regex": "\\.\\.\\.\\#\\#",
-    "indexes": []
-  },
-  {
-    "query": ".##.#",
-    "result": ".",
-    "regex": "\\.\\#\\#\\.\\#",
-    "indexes": []
-  },
-  {
-    "query": ".#...",
-    "result": "#",
-    "regex": "\\.\\#\\.\\.\\.",
-    "indexes": []
-  },
-  {
-    "query": "####.",
-    "result": "#",
-    "regex": "\\#\\#\\#\\#\\.",
-    "indexes": []
-  },
-  {
-    "query": "....#",
-    "result": ".",
-    "regex": "\\.\\.\\.\\.\\#",
-    "indexes": []
-  },
-  {
-    "query": ".##..",
-    "result": "#",
-    "regex": "\\.\\#\\#\\.\\.",
-    "indexes": []
-  },
-  {
-    "query": ".####",
-    "result": "#",
-    "regex": "\\.\\#\\#\\#\\#",
-    "indexes": []
-  },
-  {
-    "query": "..###",
-    "result": ".",
-    "regex": "\\.\\.\\#\\#\\#",
-    "indexes": []
-  },
-  {
-    "query": ".###.",
-    "result": "#",
-    "regex": "\\.\\#\\#\\#\\.",
-    "indexes": []
-  },
-  {
-    "query": "#####",
-    "result": "#",
-    "regex": "\\#\\#\\#\\#\\#",
-    "indexes": []
-  },
-  {
-    "query": "..#..",
-    "result": "#",
-    "regex": "\\.\\.\\#\\.\\.",
-    "indexes": []
-  },
-  {
-    "query": "#..#.",
-    "result": ".",
-    "regex": "\\#\\.\\.\\#\\.",
-    "indexes": []
-  },
-  {
-    "query": "###..",
-    "result": "#",
-    "regex": "\\#\\#\\#\\.\\.",
-    "indexes": []
-  },
-  {
-    "query": "#..##",
-    "result": "#",
-    "regex": "\\#\\.\\.\\#\\#",
-    "indexes": []
-  },
-  {
-    "query": "##.##",
-    "result": "#",
-    "regex": "\\#\\#\\.\\#\\#",
-    "indexes": []
-  },
-  {
-    "query": "##..#",
-    "result": ".",
-    "regex": "\\#\\#\\.\\.\\#",
-    "indexes": []
-  },
-  {
-    "query": ".#..#",
-    "result": "#",
-    "regex": "\\.\\#\\.\\.\\#",
-    "indexes": []
-  },
-  {
-    "query": "#.#..",
-    "result": "#",
-    "regex": "\\#\\.\\#\\.\\.",
-    "indexes": []
-  },
-  {
-    "query": "#.###",
-    "result": "#",
-    "regex": "\\#\\.\\#\\#\\#",
-    "indexes": []
-  },
-  {
-    "query": "#.##.",
-    "result": "#",
-    "regex": "\\#\\.\\#\\#\\.",
-    "indexes": []
-  },
-  {
-    "query": ".....",
-    "result": ".",
-    "regex": "\\.\\.\\.\\.\\.",
-    "indexes": []
-  },
-  {
-    "query": ".#.##",
-    "result": "#",
-    "regex": "\\.\\#\\.\\#\\#",
-    "indexes": []
-  },
-  {
-    "query": "#...#",
-    "result": ".",
-    "regex": "\\#\\.\\.\\.\\#",
-    "indexes": []
-  },
-  {
-    "query": "...#.",
-    "result": "#",
-    "regex": "\\.\\.\\.\\#\\.",
-    "indexes": []
-  },
-  {
-    "query": "..##.",
-    "result": "#",
-    "regex": "\\.\\.\\#\\#\\.",
-    "indexes": []
-  },
-  {
-    "query": "##.#.",
-    "result": "#",
-    "regex": "\\#\\#\\.\\#\\.",
-    "indexes": []
-  },
-  {
-    "query": "#....",
-    "result": ".",
-    "regex": "\\#\\.\\.\\.\\.",
-    "indexes": []
-  }
+var rawInput = [
+    "...## => #",
+    "..#.. => #",
+    ".#... => #",
+    ".#.#. => #",
+    ".#.## => #",
+    ".##.. => #",
+    ".#### => #",
+    "#.#.# => #",
+    "#.### => #",
+    "##.#. => #",
+    "##.## => #",
+    "###.. => #",
+    "###.# => #",
+    "####. => #"
 ];
-//*/
 
-//*
 var initial_state = "#..#.#..##......###...###";
-var morphs = [
-    {
-    	"query":"...##",
-    	"result":"#",
-    	"indexes":[]
-    },
-    {
-    	"query":"..#..",
-    	"result":"#",
-    	"indexes":[]
-    },
-    {
-    	"query":".#...",
-    	"result":"#",
-    	"indexes":[]
-    },
-    {
-    	"query":".#.#.",
-    	"result":"#",
-    	"indexes":[]
-    },
-    {
-    	"query":".#.##",
-    	"result":"#",
-    	"indexes":[]
-    },
-    {
-    	"query":".##..",
-    	"result":"#",
-    	"indexes":[]
-    },
-    {
-    	"query":".####",
-    	"result":"#",
-    	"indexes":[]
-    },
-    {
-    	"query":"#.#.#",
-    	"result":"#",
-    	"indexes":[]
-    },
-    {
-    	"query":"#.###",
-    	"result":"#",
-    	"indexes":[]
-    },
-    {
-    	"query":"##.#.",
-    	"result":"#",
-    	"indexes":[]
-    },
-    {
-    	"query":"##.##",
-    	"result":"#",
-    	"indexes":[]
-    },
-    {
-    	"query":"###..",
-    	"result":"#",
-    	"indexes":[]
-    },
-    {
-    	"query":"###.#",
-    	"result":"#",
-    	"indexes":[]
-    },
-    {
-    	"query":"####.",
-    	"result":"#",
-    	"indexes":[]
-    }
-];
+var morphs = [];
+var matches = {};
 
-//*/
+function parseInput(){
+    morphs = [];
+    matches = {};
+
+    var i;
+    var arr = [];
+    for(i=0;i<rawInput.length;i++){
+        arr = rawInput[i].split(" => ");
+        matches[arr[0]] = arr[1];
+        morphs.push({
+            "query":arr[0],
+            "result":"",
+            "indexes":[]
+        });
+    }
+} parseInput();
 
 var padding_no = 10; //number of extra "." we put in the back and front to look at
 var padding = genEmptyPots(padding_no);
-var str = '';
+var str = [];
 
 function reset(){
-    str = JSON.parse(JSON.stringify(padding+initial_state+padding));
+    str = JSON.parse(JSON.stringify(padding+initial_state+padding)).split("");
 
     printOut();
-    printOut("&nbsp;0&nbsp;"+str+"<br>");
+    printOut("&nbsp;0&nbsp;"+str.join("")+"<br>");
 }
 
+/*
 function performMorphs(){
 	console.log("INITIAL:\n",str);
 
@@ -329,6 +92,17 @@ function performMorphs(){
 	console.log("POST-MORPH:\n",str);
 
     printOut(str+"<br>");
+}
+*/
+
+function performMorphs(){
+    var i,j,k;
+
+    //First find where all the indexes are supposed to be at
+    for(i=0;i<morphs.length;i++){
+
+    }
+
 }
 
 function genEmptyPots(_howMany){
@@ -393,3 +167,19 @@ function printOut(str){
 }
 
 reset();
+
+String.prototype.findAll = function(regex){
+    var temp_arr;
+
+    var obj = {
+        "indexes":[],
+        "matches":[]
+    }
+
+    while ((temp_arr = regex.exec(this)) !== null) {
+        obj.indexes.push(regex.lastIndex);
+        obj.matches.push(temp_arr[0]);
+    }
+
+    return obj;
+}
