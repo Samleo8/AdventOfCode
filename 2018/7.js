@@ -226,13 +226,12 @@ function doSteps2(recursive){
 	}
 
 	var i,j,k;
-	var out = '';
 
 	for(j=0;j<workerActive.length;j++){
 		if(workerActive[j] != -1){ //worker is active
 			//check if he's actually done with his work
 			var l = workerActive[j].toUpperCase();
-			if(steps2[l].secondsUsed >= (steps2[l].secondsNeeded) && !steps2[l].done){ //Yay! He's done (and wasn't done before))!
+			if(steps2[l].secondsUsed >= steps2[l].secondsNeeded && !steps2[l].done){ //Yay! He's done (and wasn't done before))!
 				console.log("Worker",j,"complete with step",l);
 
 				totalSteps2.push(l);
@@ -253,6 +252,14 @@ function doSteps2(recursive){
 			else{ //Keep going...
 				console.log("Worker",j,"continuing with step",l);
 				steps2[l].secondsUsed++;
+
+				if(steps2[l].secondsUsed == steps2[l].secondsNeeded && totalSteps2.length==abc.length-1){
+					//This is the final worker. All is done. Stop now.
+					steps2[l].done = true;
+
+					display2();
+					return;
+				}
 			}
 		}
 		else{ //worker is not active
@@ -272,6 +279,15 @@ function doSteps2(recursive){
 		}
 	}
 
+	display2();
+
+	secondsPassed++;
+
+	if(recursive) doSteps2(recursive);
+}
+
+function display2(){
+	var out = '';
 	//Output/Display
 	out+="<div>Seconds Passed: "+secondsPassed+"\t\t|\t\tCurrent Steps: "+totalSteps2.join("")+"</div>";
 
@@ -289,10 +305,6 @@ function doSteps2(recursive){
 	out+="<hr />";
 
 	document.getElementById("out2").innerHTML = out;
-
-	secondsPassed++;
-
-	if(recursive) doSteps2(recursive);
 }
 
 Array.prototype.removeItem = function(item){

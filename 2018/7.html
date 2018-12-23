@@ -11,6 +11,10 @@
 			justify-content:space-around;
 		}
 
+		.answer, .out{
+			color:white;
+		}
+
 		.title{
 			display: block;
 			font-size: 120%;
@@ -29,13 +33,13 @@
 			font-size: 105%;
 			font-weight: bold;
 			font-variant: caps;
-			border-bottom: 1px solid grey;
+			border-bottom: 1px solid lightgrey;
 			padding-bottom: 5px;
 			margin-bottom: 5px;
 		}
 
 		.complete{
-			color:lightgrey;
+			color:#888;
 		}
 
 		table{
@@ -60,23 +64,26 @@
 			<div class="q7" id="q7a">
 				<div class="controls">
 					<b class="title">7a</b>
-					<div class="button"value="Next Step" onclick="doSteps()">Next Step</div>
-					<div class="button"value="Complete All Steps" onclick="doSteps(true)">All Steps</div>
-					<div class="button"value="Reset" onclick="genSteps()">Reset</div>
+					<div class="button" onclick="doSteps()">Next Step</div>
+					<div class="button" onclick="doSteps(true)">All Steps</div>
+					<div class="button" onclick="genSteps()">Reset</div>
 				</div>
-				<div id="answer1"></div>
-				<div id="out1"></div>
+				<div id="answer1" class="answer"></div>
+				<div id="out1" class="out"></div>
 			</div>
 
 			<div class="q7" id="q7b">
 				<div class="controls">
 					<b class="title">7b</b>
-					<div class="button"value="+1 Second" onclick="doSteps2(false)"></div> <div class="button"value="+10 Seconds" onclick="javascript:for(i=0;i<10;i++) doSteps2(false)"></div> <div class="button"value="Complete All Seconds" onclick="doSteps2(true)"></div> <div class="button"value="Reset" onclick="genSteps()"></div>
+					<div class="button" onclick="doSteps2(false)">+1 Second</div>
+					<div class="button" onclick="javascript:for(_i=0;_i<10;_i++) doSteps2(false)">+10 Seconds</div>
+					<div class="button" onclick="javascript:for(_i=0;_i<100;_i++) doSteps2(false)">+100 Seconds</div>
+					<div class="button" onclick="doSteps2(true)">All Seconds</div> <div class="button" onclick="genSteps()">Reset</div>
 				</div>
-				
-				<div id="answer2"></div>
-				<div id="out2"></div>
-				<div id="out3"></div>
+
+				<div id="answer2" class="answer"></div>
+				<div id="out2" class="out"></div>
+				<div id="out3" class="out"></div>
 			</div>
 		</div>
 
