@@ -152,82 +152,103 @@ var input = ["                                  \/------------------------------
 var grid = [];
 var carts = [];
 
+var steps = 0;
+
+var dir_display = {
+	"left":"<",
+	"right":">",
+	"up":"^",
+	"down":"v"
+}
+
 var dir_coord = {
 	"left":[-1,0],
 	"right":[1,0],
 	"up":[0,-1],
-	"down":[1,0]
+	"down":[0,1]
 }
 
-for(var i=0;i<input.length;i++){
-	grid.push([]);
-	for(var j=0;j<input[i].length;j++){
-		var t = input[i][j];
-		var obj = {
-			"x":j,
-			"y":i,
-			"raw":t,
-			"type":null,
-			"type_specific":null
-		}
+function reset(){
+	steps = 0;
 
-		//For the types
-		switch(t){
-			case "|":
-			case "^":
-			case "v":
-			case "V":
-				obj.type = "track";
-				obj.type_specific = "track-up";
-				break;
-			case "-":
-			case "<":
-			case ">":
-				obj.type = "track";
-				obj.type_specific = "track-left";
-				break;
-			case "\/":
-				obj.type = "junction";
-				obj.type_specific = "junction-slash";
-				break;
-			case "\\":
-				obj.type = "junction";
-				obj.type_specific = "junction-backslash";
-				break;
-			case "+":
-				obj.type = "intersection";
-				obj.type_specific = "intersection";
-				break;
-			default:
-				obj.type = "empty";
-				obj.type_specific = "empty";
-		}
+	for(var i=0;i<input.length;i++){
+		grid.push([]);
+		for(var j=0;j<input[i].length;j++){
+			var t = input[i][j];
+			var obj = {
+				"x":j,					//x-coordinate
+				"y":i,					//y-coordinate
+				"raw":t,				//raw character ( / \ + | )
+				"type":null,			//type [ track | junction | intersection ]
+				"type_specific":null,	//specific type [ track-up | track-left | 		junction-slash | junction-backslash | intersection ]
+				"cart":-1				//cart id (-1 if no cart on the track)
+			}
 
-		var _cart = {};
-		var _dir = { //x,y
-			"<":"left",
-			">":"right",
-			"^":"up",
-			"v":"down"
-		}
+			//For the types
+			switch(t){
+				case "|":
+				case "^":
+				case "v":
+				case "V":
+					obj.type = "track";
+					obj.type_specific = "track-up";
+					break;
+				case "-":
+				case "<":
+				case ">":
+					obj.type = "track";
+					obj.type_specific = "track-left";
+					break;
+				case "\/":
+					obj.type = "junction";
+					obj.type_specific = "junction-slash";
+					break;
+				case "\\":
+					obj.type = "junction";
+					obj.type_specific = "junction-backslash";
+					break;
+				case "+":
+					obj.type_specific = obj.type = "intersection";
+					break;
+				default:
+					obj.type = obj.type_specific = "empty";
+			}
 
-		//For if it's a cart
-		switch(t){
-			case "<": case ">": case "^": case "V": case "v":
-				_cart.x = j;
-				_cart.y = i;
-				_cart.dir = _dir[t];
-				_cart.intersection = 0;
-				carts.push(_cart);
-				break;
-		}
+			var _cart = {};
+			var _dir = { //x,y
+				"<":"left",
+				">":"right",
+				"^":"up",
+				"v":"down"
+			}
 
-		grid[i].push(obj);
+			//For if it's a cart
+			switch(t){
+				case "<": case ">": case "^": case "V": case "v":
+					_cart.x = j;
+					_cart.y = i;
+					_cart.dir = dir_coord[_dir[t]];
+					_cart.dir_name = _dir[t];
+					_cart.intersection = 0;
+					carts.push(_cart);
+
+					_cart.id = carts.length-1;
+
+					obj.cart = _cart.id;
+					obj.raw = "|";
+					break;
+			}
+
+			grid[i].push(obj);
+		}
 	}
+	printGrid();
 }
-printGrid();
+reset();
 
 function printGrid(){
+	document.getElementById("out").innerHTML = '';
+
 	var table = document.createElement("table");
 
 	var x,y;
@@ -245,6 +266,11 @@ function printGrid(){
 				td.innerHTML = "\\";
 			}
 
+			if(grid[y][x].cart!=-1){
+				td.className = "cart cart_"+grid[y][x].cart;
+				td.innerHTML = dir_display[carts[grid[y][x].cart].dir_name];
+			}
+
 			tr.appendChild(td);
 		}
 		table.appendChild(tr);
@@ -253,20 +279,129 @@ function printGrid(){
 	document.getElementById("out").appendChild(table);
 }
 
-function nextStep(steps){
+function nextStep(print_grid){
+	steps++;
 	var i,j;
+
+	//Since top row moves first, then left row we need to sort accordingly
 
 	for(i=0;i<carts.length;i++){
 		//Next step for each cart by its direction and whether it's at an intersection or junction
-		switch(){
+		var track = grid[carts[i]["y"]][carts[i]["x"]];
 
+		switch(track.type_specific){
+			case "track-up": 	// '|'
+			case "track-left": 	// '-'
+				//No change, just move
+				break;
+			case "junction-slash": // '/'
+				switch(carts[i].dir_name) {
+					case "down": //go left
+						carts[i].dir_name = "left";
+						break;
+					case "up": //go right
+						carts[i].dir_name = "right";
+						break;
+					case "right": //go up
+						carts[i].dir_name = "up";
+						break;
+					case "left": //go down
+						carts[i].dir_name = "down";
+						break;
+					default:
+						break;
+				}
+				break;
+			case "junction-backslash": // '\'
+				switch(carts[i].dir_name) {
+					case "up": //go left
+						carts[i].dir_name = "left";
+						break;
+					case "down": //go right
+						carts[i].dir_name = "right";
+						break;
+					case "left": //go up
+						carts[i].dir_name = "up";
+						break;
+					case "right": //go down
+						carts[i].dir_name = "down";
+						break;
+					default:
+						break;
+				}
+				break;
+			case "intersection": // '+'
+				switch(carts[i].intersection){
+					//NOTE: Directions are all relative to the current cart's direction (ie. if the cart is moving 'left', 'go left' implies go up)
+					case 0: //go straight, so do nth
+						break;
+					case 1: //go left
+						case "up": carts[i].dir_name = "left"; break;
+						case "left": carts[i].dir_name = "down"; break;
+						case "down": carts[i].dir_name = "right"; break;
+						case "right": carts[i].dir_name = "up"; break;
+						break;
+					case 2:
+						case "down": carts[i].dir_name = "left"; break;
+						case "right": carts[i].dir_name = "down"; break;
+						case "up": carts[i].dir_name = "right"; break;
+						case "left": carts[i].dir_name = "up"; break;
+						break;
+					default:
+						console.error("ERROR: Cart",i,"intersection number not found");
+						break;
+				}
+
+				carts[i].intersection++;
+				if(carts[i].intersection==3) carts[i].intersection = 0;
+				break;
+			default:
+				//alert("ERROR: CART NOT ON A TRACK!");
+				console.error("ERROR: CART",i,"NOT ON A TRACK!");
+				return false;
+		}
+
+		//Movement based on direction
+		carts[i].dir = dir_coord[carts[i].dir_name];
+
+		carts[i]["x"]+=carts[i].dir[0];
+		carts[i]["y"]+=carts[i].dir[1];
+
+		//Collision detection
+		if(grid[carts[i]["y"]][carts[i]["x"]].cart != -1){
+			alert("Collision!");
+			return [ grid[carts[i]["y"]][carts[i]["x"]].cart, i ]; //ids of collisions
+		}
+		else{
+			//Remove cart from old 'track'
+			track.cart = -1;
+
+			//Indicate that new 'track' has this cart
+			grid[carts[i]["y"]][carts[i]["x"]].cart = i;
 		}
 	}
 
-	if(steps == null || steps == undefined || typeof steps == "undefined"){
-		return nextStep();
+	if(print_grid) printGrid();
+
+	return false;
+}
+
+function nextSteps(nSteps){
+	var collision = false;
+	while(nSteps-- && !collision){
+		collision = nextStep(true);
 	}
-	else{
-		return;
+
+	console.log("Steps taken:",steps);
+	if(collision) console.log("IDs of colliding carts:",collision);
+}
+
+function allSteps(){
+	var collision = false;
+	while(!collision){
+		collision = nextStep(true);
 	}
+
+	console.log("Steps taken:",steps);
+	console.log("IDs of colliding carts:",collision);
 }

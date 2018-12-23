@@ -5,57 +5,70 @@
 		<title>AoC 13</title>
 		<link rel="stylesheet" href="../global.css">
 		<style>
-		table{
-			border-collapse:separate;
-			border-spacing: 0px;
-		}
+			table{
+				border-collapse:separate;
+				border-spacing: 0px;
+				table-layout: fixed;
+			}
 
-		td{
-			width:1em;
-			height:1em;
-			font-size:8px;
+			td{
+				height:10px;
+				width:10px;
+				padding:0px 3.5px;
 
-			background: black;
-			border:1px solid black;
-		}
+				background: black;
+				border:1px solid black;
 
-		td.intersection{
-			background: orange;
-			border:1px solid orange;
-		}
+				font-family:consolas;
+				font-size: 12px;
+				font-weight: bold;
+				color:black;
 
-		td.track-up{
-			background:snow;
-			border-top:1px solid snow;
-			border-bottom:1px solid snow;
-		}
+				text-align: center;
+				vertical-align: center;
+			}
 
-		td.track-left{
-			background:snow;
-			border-right:1px solid snow;
-			border-left:1px solid snow;
-		}
+			td.intersection{
+				background:#ffecb3;
+				border:0px solid #fff3e0;
+			}
 
-		td.junction-slash, td.junction-backslash{
-			color:black;
-			background:yellow;
-			border:1px solid yellow;
+			td.track{
+				background: #fffde7;
+			}
 
-			text-align: center;
-			font-family: consolas;
-		}
+			td.track-up{
+				border-top:1px solid #fffde7;
+				border-bottom:1px solid #fffde7;
+			}
 
-		td.cart{
-			background:blue;
-		}
+			td.track-left{
+				border-right:1px solid #fffde7;
+				border-left:1px solid #fffde7;
+			}
+
+			td.junction-slash, td.junction-backslash{
+				background:#fff9c4;
+				border:0px solid #fff9c4;
+			}
+
+			td.cart{
+				background:#8bf6ff;
+				border:1px solid #4fc3f7;
+			}
 		</style>
 	</head>
 	<body>
 		<div id="controls">
-			<div class="button">+1 Step</div> <div class="button">+2 Step</div> <div class="button">Until crash</div>
+			<div class="button" onclick="nextStep(true)">+1 Step</div>
+			<div class="button" onclick="nextSteps(10)">+10 Steps</div>
+			<div class="button" onclick="nextSteps(100)">+100 Steps</div>
+
+			<div class="button">Until crash</div>
 		</div>
 		<div id="out"></div>
 
+		<script src="../thenBy.js"></script>
 		<script src="13.js"></script>
 	</body>
 </html>
