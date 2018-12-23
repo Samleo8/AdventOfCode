@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<title>AoC 7</title>
+		<link rel="stylesheet" href="../global.css">
 		<style>
 		.container{
 			display: flex;
@@ -57,17 +58,22 @@
 	<body>
 		<div class="container">
 			<div class="q7" id="q7a">
-				<b class="title">7a</b>
-				<input type="button" value="Next Step" onclick="doSteps()"/> <input type="button" value="Complete All Steps" onclick="doSteps(true)"/> <input type="button" value="Reset" onclick="genSteps()"/>
-				<hr />
+				<div class="controls">
+					<b class="title">7a</b>
+					<div class="button"value="Next Step" onclick="doSteps()">Next Step</div>
+					<div class="button"value="Complete All Steps" onclick="doSteps(true)">All Steps</div>
+					<div class="button"value="Reset" onclick="genSteps()">Reset</div>
+				</div>
 				<div id="answer1"></div>
 				<div id="out1"></div>
 			</div>
 
 			<div class="q7" id="q7b">
-				<b class="title">7b</b>
-				<input type="button" value="+1 Second" onclick="doSteps2(false)"/> <input type="button" value="+10 Seconds" onclick="javascript:for(i=0;i<10;i++) doSteps2(false)"/> <input type="button" value="Complete All Seconds" onclick="doSteps2(true)"/> <input type="button" value="Reset" onclick="genSteps()"/>
-				<hr />
+				<div class="controls">
+					<b class="title">7b</b>
+					<div class="button"value="+1 Second" onclick="doSteps2(false)"></div> <div class="button"value="+10 Seconds" onclick="javascript:for(i=0;i<10;i++) doSteps2(false)"></div> <div class="button"value="Complete All Seconds" onclick="doSteps2(true)"></div> <div class="button"value="Reset" onclick="genSteps()"></div>
+				</div>
+				
 				<div id="answer2"></div>
 				<div id="out2"></div>
 				<div id="out3"></div>

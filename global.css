@@ -46,11 +46,10 @@ td{
 	margin-right:10px;
 }
 
-#controls{
+#controls, .controls{
 	background:azure;
 	padding: 10px;
 	border-bottom: 1px solid black;
-	width:100%;
 }
 
 .button {
