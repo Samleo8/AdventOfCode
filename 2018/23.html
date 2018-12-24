@@ -2,30 +2,37 @@
 <html lang="en" dir="ltr">
 	<head>
 		<meta charset="utf-8">
-		<title>AoC 13</title>
+		<title>AoC 23</title>
 		<link rel="stylesheet" href="../global.css">
 		<style>
+		#bot_id_input{
+			width:5em;
+		}
+
+		.botData td{
+			padding: 0px 5px;
+		}
+
+		.botData td:not(:first-child){
+			padding: 0px 10px;
+		}
 		</style>
 	</head>
 	<body>
 		<div id="controls">
-			<div class="button" onclick="nextSteps(1)">+1 Step</div>
-			<div class="button" onclick="nextSteps(10)">+10 Steps</div>
-			<div class="button" onclick="nextSteps(100)">+100 Steps</div>
+			Bot ID: <input type="number" min="0" width="10" step="1" placeholder="Bot ID" id="bot_id_input" maxlength="10" onkeyup="botIdInput(event)" value="0" />
+			<div class="x-padding"></div>
+			<div class="button" onclick="calcInRange()">Calculate in Range</div>
 
 			<div class="x-separator"></div>
 
-			<div class="button" onclick="reset()">Reset</div>
-			<div class="button" onclick="nextCrash()">Next Crash</div>
-			<div class="button" onclick="allCrashes()">All Crashes</div>
-
-			<div class="y-separator"></div>
-
-			<div id="out_data"></div>
+			<div class="button" onclick="printBots()">Print All Bots</div>
+			<div class="button" onclick="clearOutput()">Clear</div>
 		</div>
+
 		<div id="out"></div>
 
 		<script src="../thenBy.js"></script>
-		<script src="13.js"></script>
+		<script src="23.js"></script>
 	</body>
 </html>

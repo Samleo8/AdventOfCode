@@ -1001,6 +1001,18 @@ var rawInput = [
 	"pos=<67142760,-30497295,74720311>, r=94223722"
 ];
 
+/*rawInput = [
+	"pos=<0,0,0>, r=4",
+	"pos=<1,0,0>, r=1",
+	"pos=<4,0,0>, r=3",
+	"pos=<0,2,0>, r=1",
+	"pos=<0,5,0>, r=3",
+	"pos=<0,0,3>, r=1",
+	"pos=<1,1,1>, r=1",
+	"pos=<1,1,2>, r=1",
+	"pos=<1,3,1>, r=1"
+]*/
+
 bots = [];
 
 function parseInput(){
@@ -1010,10 +1022,109 @@ function parseInput(){
 		var numbers = rawInput[i].match(new RegExp("([-0-9]+)","gi"));
 
 		bots.push({
-			"x":numbers[0],
-			"y":numbers[1],
-			"z":numbers[2],
-			"r":numbers[3]
+			"x":parseInt(numbers[0]),
+			"y":parseInt(numbers[1]),
+			"z":parseInt(numbers[2]),
+			"r":parseInt(numbers[3])
 		});
 	}
+
+	//Sort by range descending
+	bots.sort(function(a,b){
+		return b.r-a.r;
+	});
+
+	document.getElementById("bot_id_input").max = bots.length-1;
 } parseInput();
+
+function dist(bot1,bot2){
+	return Math.abs(bot1.x-bot2.x)+Math.abs(bot1.y-bot2.y)+Math.abs(bot1.z-bot2.z);
+}
+
+function botIdInput(e){
+	if(e.keycode == 13){
+		calcInRange();
+	}
+}
+
+function calcInRange(bot){
+	if(bot==null || bot == undefined || typeof bot==undefined){
+		bot = parseInt(document.getElementById("bot_id_input").value);
+	}
+
+	if(bot < 0 || bot >= bots.length || isNaN(bot) ){
+		console.log("Error: Bot ID out of range!");
+		//alert("Error: Bot ID out of range!");
+		document.getElementById("bot_id_input").value = 0;
+		return;
+	}
+
+	var out = '';
+	var botsInRange = [];
+	var range = bots[bot].r;
+
+	for(i=0;i<bots.length;i++){
+		if(bot == i) continue;
+
+		if(dist(bots[i],bots[bot])<=range){
+			botsInRange.push(i);
+		}
+	}
+
+	out += '<h2 class="title">Bots which are in range of bot <i>'+bot+'</i> :</h2>';
+	out += "<div><b>Bot IDs: </b>"+JSON.stringify(botsInRange)+"</div>";
+	out += "<div><b>Total (incl. itself): </b>"+parseInt(botsInRange.length+1)+"</div><hr />";
+
+	document.getElementById("out").innerHTML = out+document.getElementById("out").innerHTML;
+
+	return botsInRange;
+}
+
+function clearOutput(){
+	document.getElementById("out").innerHTML = '';
+}
+
+function printBots(clear){
+	var i,j,td;
+
+	if(clear){
+		document.getElementById("out").innerHTML = '';
+	}
+
+	document.getElementById("out").innerHTML += '<h2 class="title">BOTS:</h2>';
+
+	var table = document.createElement("table");
+	table.className = "botData";
+
+	var tr = document.createElement("tr");
+	var th = document.createElement("th");
+	th.innerHTML = "ID";
+	tr.appendChild(th);
+
+	for(j in bots[0]){
+		th = document.createElement("th");
+		th.innerHTML = j.toString();
+
+		tr.appendChild(th);
+	}
+
+	table.appendChild(tr);
+
+	for(i=0;i<bots.length;i++){
+		tr = document.createElement("tr");
+
+		td = document.createElement("td");
+		td.innerHTML = i;
+		tr.appendChild(td);
+
+		for(j in bots[i]){
+			td = document.createElement("td");
+			td.innerHTML = bots[i][j];
+			tr.appendChild(td);
+		}
+
+		table.appendChild(tr);
+	}
+
+	document.getElementById("out").appendChild(table);
+}
