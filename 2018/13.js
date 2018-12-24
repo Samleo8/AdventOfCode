@@ -1,4 +1,6 @@
-var input = ["                                  \/------------------------------------------------------------------------------------------------------\\            ",
+var input;
+
+input = ["                                  \/------------------------------------------------------------------------------------------------------\\            ",
 "                                  |                                                  \/------------------------------\\               \/----+---\\        ",
 "                                  |                                 \/----------------+-------------\\                |               | \/--+---+----\\   ",
 " \/-----------------------------\\  |                         \/-------+------------\\   |    \/--------+----------------+---------------+-+--+---+----+-\\ ",
@@ -149,6 +151,16 @@ var input = ["                                  \/------------------------------
 "        \\--------------------\/       \\-----------------------------------------------\/  \\---------+---------+----------------\/                        ",
 "                                                                                                  \\---------\/                                         "];
 
+//*
+input = ["\/>-<\\  ",
+"|   |  ",
+"| \/<+-\\",
+"| | | v",
+"\\>+<\/ |",
+"  |   ^",
+"  \\<->\/"];
+//*/
+
 var grid = [];
 var carts = [];
 
@@ -169,6 +181,9 @@ var dir_coord = {
 }
 
 function reset(){
+	grid = [];
+	carts = [];
+
 	steps = 0;
 
 	for(var i=0;i<input.length;i++){
@@ -232,9 +247,7 @@ function reset(){
 					_cart.intersection = 0;
 					carts.push(_cart);
 
-					_cart.id = carts.length-1;
-
-					obj.cart = _cart.id;
+					obj.cart = carts.length-1;
 					obj.raw = "|";
 					break;
 			}
@@ -242,6 +255,8 @@ function reset(){
 			grid[i].push(obj);
 		}
 	}
+
+	outputCollisionData([]);
 	printGrid();
 }
 reset();
@@ -252,6 +267,16 @@ function printGrid(){
 	var table = document.createElement("table");
 
 	var x,y;
+
+	//Before printing the grid, we need to set all the grid entries containing carts to the correct index because entries have been removed due to collisions
+	for(i=0;i<carts.length;i++){
+		var x = carts[i].x;
+		var y = carts[i].y;
+
+		grid[y][x].cart = i;
+	}
+
+	//Now loop through the 2D grid array and create a table accordingly
 	for(y=0;y<grid.length;y++){
 		var tr = document.createElement("tr");
 		for(x=0;x<grid[y].length;x++){
@@ -266,9 +291,14 @@ function printGrid(){
 				td.innerHTML = "\\";
 			}
 
-			if(grid[y][x].cart!=-1){
-				td.className = "cart cart_"+grid[y][x].cart;
-				td.innerHTML = dir_display[carts[grid[y][x].cart].dir_name];
+			var _c = grid[y][x].cart;
+			if(_c!=-1){
+				td.className = "cart cart_"+_c;
+				if(carts[_c])
+					td.innerHTML = dir_display[ carts[_c].dir_name ];
+				else{
+					console.error(y,x,grid[y][x].cart);
+				}
 			}
 
 			tr.appendChild(td);
@@ -280,10 +310,23 @@ function printGrid(){
 }
 
 function nextStep(print_grid){
-	steps++;
 	var i,j;
+	var collisions = [];
 
-	//Since top row moves first, then left row we need to sort accordingly
+	if(carts.length == 1){ //Last dude remaining
+		//outputFinalCartData();
+		return "FINAL";
+	}
+
+	//Since top row's cart moves first, then left to right we need to sort accordingly
+	carts.sort(
+		firstBy(function(a,b){
+			return a.y-b.y;
+		})
+		.thenBy("x")
+	);
+
+	//for(i=0;i<carts.length;i++) grid[carts[i]["y"]][carts[i]["x"]].cart = i;
 
 	for(i=0;i<carts.length;i++){
 		//Next step for each cart by its direction and whether it's at an intersection or junction
@@ -333,19 +376,23 @@ function nextStep(print_grid){
 			case "intersection": // '+'
 				switch(carts[i].intersection){
 					//NOTE: Directions are all relative to the current cart's direction (ie. if the cart is moving 'left', 'go left' implies go up)
-					case 0: //go straight, so do nth
+					case 0: //go left
+						switch(carts[i].dir_name){
+							case "up": carts[i].dir_name = "left"; break;
+							case "left": carts[i].dir_name = "down"; break;
+							case "down": carts[i].dir_name = "right"; break;
+							case "right": carts[i].dir_name = "up"; break;
+						}
 						break;
-					case 1: //go left
-						case "up": carts[i].dir_name = "left"; break;
-						case "left": carts[i].dir_name = "down"; break;
-						case "down": carts[i].dir_name = "right"; break;
-						case "right": carts[i].dir_name = "up"; break;
+					case 1: //go straight, so do nth
 						break;
 					case 2:
-						case "down": carts[i].dir_name = "left"; break;
-						case "right": carts[i].dir_name = "down"; break;
-						case "up": carts[i].dir_name = "right"; break;
-						case "left": carts[i].dir_name = "up"; break;
+						switch(carts[i].dir_name){
+							case "down": carts[i].dir_name = "left"; break;
+							case "right": carts[i].dir_name = "down"; break;
+							case "up": carts[i].dir_name = "right"; break;
+							case "left": carts[i].dir_name = "up"; break;
+						}
 						break;
 					default:
 						console.error("ERROR: Cart",i,"intersection number not found");
@@ -356,9 +403,8 @@ function nextStep(print_grid){
 				if(carts[i].intersection==3) carts[i].intersection = 0;
 				break;
 			default:
-				//alert("ERROR: CART NOT ON A TRACK!");
 				console.error("ERROR: CART",i,"NOT ON A TRACK!");
-				return false;
+				return "ERROR";
 		}
 
 		//Movement based on direction
@@ -368,9 +414,19 @@ function nextStep(print_grid){
 		carts[i]["y"]+=carts[i].dir[1];
 
 		//Collision detection
-		if(grid[carts[i]["y"]][carts[i]["x"]].cart != -1){
-			alert("Collision!");
-			return [ grid[carts[i]["y"]][carts[i]["x"]].cart, i ]; //ids of collisions
+		var _c = grid[carts[i]["y"]][carts[i]["x"]].cart;
+		if(_c != -1){
+			//Remove cart from old 'track'
+			track.cart = -1;
+			grid[ carts[i]["y"] ][ carts[i]["x"] ].cart = -1;
+
+			collisions.push({
+				"carts":[ i, _c ], //ids of collisions: cart and the cart it collides with
+				"coords":{ //coords of collisions
+					"x":carts[i]["x"],
+					"y":carts[i]["y"]
+				}
+			});
 		}
 		else{
 			//Remove cart from old 'track'
@@ -381,27 +437,135 @@ function nextStep(print_grid){
 		}
 	}
 
+	steps++;
 	if(print_grid) printGrid();
 
-	return false;
+	return collisions;
 }
 
 function nextSteps(nSteps){
-	var collision = false;
-	while(nSteps-- && !collision){
-		collision = nextStep(true);
+	var collisions = [];
+	while(nSteps-- && collisions.length==0){
+		collisions = nextStep();
+
+		if(collisions == "FINAL"){
+			//console.log("Final cart!");
+			outputFinalCartData();
+			return; 		//Last cart found
+		}
+		if(collisions == "ERROR") return; //ERROR
 	}
 
-	console.log("Steps taken:",steps);
-	if(collision) console.log("IDs of colliding carts:",collision);
+	outputCollisionData(collisions);
 }
 
-function allSteps(){
-	var collision = false;
-	while(!collision){
-		collision = nextStep(true);
+function nextCrash(){
+	if(carts.length == 1){
+		outputFinalCartData();
+		return;
 	}
 
+	var collisions = [];
+	while(collisions.length==0){
+		collisions = nextStep();
+
+		if(collisions == "FINAL"){
+			//console.log("Final cart!");
+			outputFinalCartData();
+			return; 		//Last cart found
+		}
+		if(collisions == "ERROR") return; //ERROR
+	}
+
+	outputCollisionData(collisions);
+}
+
+function allCrashes(){
+	while(carts.length>1){
+		nextCrash();
+	}
+
+	outputFinalCartData();
+}
+
+function outputFinalCartData(){
+	var x = carts[0].x;
+	var y = carts[0].y;
+	//Because the array has been changed, the 'cart' index in the grid will also change
+	grid[y][x].cart = 0;
+
+	//Remove all collisions on grid
+	var coln = document.getElementsByClassName("collision");
+	for(i=0;i<coln.length;i++){
+		var ele = coln[i];
+		var coord = ele.id.split("_");
+		var _x = coord[1];
+		var _y = coord[2];
+
+		ele.className = grid[_y][_x].type+" "+grid[_y][_x].type_specific;
+
+		if(grid[_y][_x].raw == "\/"){
+			ele.innerHTML = "\/";
+		}
+		else if(grid[_y][_x].raw == "\\"){
+			ele.innerHTML = "\\";
+		}
+		else{
+			ele.innerHTML = "";
+		}
+	}
+
+	//Output number of steps and final cart data
+	document.getElementById("out_data").innerHTML = "Steps: "+steps;
 	console.log("Steps taken:",steps);
-	console.log("IDs of colliding carts:",collision);
+
+	document.getElementById("out_data").innerHTML += " | Final cart at: ("+x+","+y+")";
+
+	//Show where the last cart is
+	document.getElementById("grid_"+x+"_"+y).className = "last_cart";
+}
+
+function outputCollisionData(collisions){
+	document.getElementById("out_data").innerHTML = "Steps: "+steps;
+	console.log("Steps taken:",steps);
+
+	var indexesToRemove = [];
+
+	for(var i=0;i<collisions.length;i++){
+		var collision = collisions[i];
+
+		var x = collision.coords.x;
+		var y = collision.coords.y;
+
+		document.getElementById("out_data").innerHTML += " | Collision at: ("+x+","+y+") with carts: "+JSON.stringify(collision.carts);
+
+		console.log("Collision data:",collision);
+
+		//Mark carts that are to be removed after crash
+		indexesToRemove.push(collision.carts[0]);
+		indexesToRemove.push(collision.carts[1]);
+	}
+
+	//Remove the bigger-index cart first so that the smaller-index one won't have it's index changed. To do this we sort in reverse order
+	indexesToRemove.sort(function(a,b){
+		return b-a;
+	});
+
+	for(var i=0;i<indexesToRemove.length;i++){
+		var ind = indexesToRemove[i];
+		grid[carts[ind].y][carts[ind].x].cart = -1;
+
+		carts.splice(ind,1);
+	}
+
+	printGrid();
+
+	for(var i=0;i<collisions.length;i++){
+		var collision = collisions[i];
+		var x = collision.coords.x;
+		var y = collision.coords.y;
+
+		document.getElementById("grid_"+x+"_"+y).className = "collision";
+		document.getElementById("grid_"+x+"_"+y).innerHTML = "!";
+	}
 }

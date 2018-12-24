@@ -56,15 +56,33 @@
 				background:#8bf6ff;
 				border:1px solid #4fc3f7;
 			}
+
+			td.collision{
+				background: red;
+				border:1px solid darkred;
+			}
+
+			td.last_cart{
+				background: limegreen;
+				border: 1px solid green;
+			}
 		</style>
 	</head>
 	<body>
 		<div id="controls">
-			<div class="button" onclick="nextStep(true)">+1 Step</div>
+			<div class="button" onclick="nextSteps(1)">+1 Step</div>
 			<div class="button" onclick="nextSteps(10)">+10 Steps</div>
 			<div class="button" onclick="nextSteps(100)">+100 Steps</div>
 
-			<div class="button">Until crash</div>
+			<div class="x-separator"></div>
+
+			<div class="button" onclick="reset()">Reset</div>
+			<div class="button" onclick="nextCrash()">Next Crash</div>
+			<div class="button" onclick="allCrashes()">All Crashes</div>
+
+			<div class="y-separator"></div>
+
+			<div id="out_data"></div>
 		</div>
 		<div id="out"></div>
 
