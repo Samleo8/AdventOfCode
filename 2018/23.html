@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+	<head>
+		<meta charset="utf-8">
+		<title>AoC 13</title>
+		<link rel="stylesheet" href="../global.css">
+		<style>
+		</style>
+	</head>
+	<body>
+		<div id="controls">
+			<div class="button" onclick="nextSteps(1)">+1 Step</div>
+			<div class="button" onclick="nextSteps(10)">+10 Steps</div>
+			<div class="button" onclick="nextSteps(100)">+100 Steps</div>
+
+			<div class="x-separator"></div>
+
+			<div class="button" onclick="reset()">Reset</div>
+			<div class="button" onclick="nextCrash()">Next Crash</div>
+			<div class="button" onclick="allCrashes()">All Crashes</div>
+
+			<div class="y-separator"></div>
+
+			<div id="out_data"></div>
+		</div>
+		<div id="out"></div>
+
+		<script src="../thenBy.js"></script>
+		<script src="13.js"></script>
+	</body>
+</html>
