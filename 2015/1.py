@@ -2,10 +2,12 @@ input = "(((())))()((((((((())()(()))(()((((()(()(((()((()((()(()()()()()))(((()
 
 floor = 0
 
-for i in input:
-    if i == "(":
+for i in range(len(input)):
+    if input[i] == "(":
         floor+=1
-    elif i==")":
+    elif input[i] == ")":
         floor-=1
 
-print(floor)
+    if floor == -1:
+        print("Basement entered at: "+str(i+1))
+print("Final Floor: "+str(floor))
