@@ -25,3 +25,5 @@ print(totalSA)
 
 print("Total Ribbon Needed:",end=" ")
 print(totalRibbon)
+
+f.close()
