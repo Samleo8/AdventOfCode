@@ -32,17 +32,6 @@ print(niceStrings)
 
 niceStrings = 0
 
-'''
-lines = [
-    "zgsnvdmlfuplrubt",
-    "vlhagaovgqjmgvwq",
-    "ffumlmqwfcsyqpss",
-    "zztdcqzqddaazdjp",
-    "eavfzjajkjesnlsb",
-    "zzzzabcdefghadfs"
-]
-'''
-
 for s in lines:
     s = s.strip()
     #print("\n"+s)
