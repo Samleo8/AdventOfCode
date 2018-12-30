@@ -1602,8 +1602,14 @@ var walls = {
 };
 
 var map = [];
+/* MAP
+	[ x, y ] = ??:
+		0: Empty
+		1: Wall
+		2: Water
+*/
 
-var boundCoords = {
+var bounds = {
 	"x":{
 		"min":1000000,
 		"max":-1000000
@@ -1614,15 +1620,18 @@ var boundCoords = {
 	}
 }
 
-function parseInput(){
+function parseAndPrintInput(){
 	var i,j,k;
 	var x1,x2,y1,y2;
+
 	for(i=0;i<rawInput.length;i++){
-		var numbers = rawInput[i].match(new RegExp("(\d+)","g"));
+		var r = new RegExp("([0-9]+)","g");
+		var numbers = rawInput[i].match(r);
+
 		if(rawInput[i][0] == "x"){
-			x1 = numbers[0];
-			y1 = numbers[1];
-			y2 = numbers[2];
+			x1 = parseInt(numbers[0]);
+			y1 = parseInt(numbers[1]);
+			y2 = parseInt(numbers[2]);
 
 			//Fill the wall object
 			if(!walls["x"].hasOwnProperty(x1)){
@@ -1640,17 +1649,50 @@ function parseInput(){
 				}
 			}
 
-
 			//Get Bounds
-			boundCoords.x.min = Math.min(boundCoords.x.min,x1);
-			boundCoords.x.max = Math.min(boundCoords.x.max,x1);
+			bounds.x.min = Math.min(bounds.x.min,x1);
+			bounds.x.max = Math.min(bounds.x.max,x1);
 
-			boundCoords.y.min = Math.min(boundCoords.y.min,y1);
-			boundCoords.y.max = Math.min(boundCoords.y.max,y2);
+			bounds.y.min = Math.min(bounds.y.min,y1);
+			bounds.y.max = Math.min(bounds.y.max,y2);
 
 		}
 		else{ // == y
+			y1 = parseInt(numbers[0]);
+			x1 = parseInt(numbers[1]);
+			x2 = parseInt(numbers[2]);
 
+			//Fill the wall object
+			if(!walls["y"].hasOwnProperty(y1)){
+				walls["y"][y1] = [];
+			}
+
+			for(j=x1;j<=x2;j++){
+				walls["y"][y1].push(j);
+
+				if(walls["x"].hasOwnProperty(j)){
+					walls["x"][j].push(y1);
+				}
+				else {
+					walls["x"][j] = [y1];
+				}
+			}
+
+			//Get Bounds
+			bounds.x.min = Math.min(bounds.x.min,x1);
+			bounds.x.max = Math.min(bounds.x.max,x2);
+
+			bounds.y.min = Math.min(bounds.y.min,y1);
+			bounds.y.max = Math.min(bounds.y.max,y1);
 		}
 	}
+
+	for(i=bounds.x.min;i<bounds.x.max-bounds.x.min;i++){
+		for(j=bounds.y.min;j<bounds.y.max-bounds.y.min;j++){
+			map[y][x]
+		}
+	}
+
 }
+
+parseAndPrintInput()
