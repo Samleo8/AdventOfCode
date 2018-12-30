@@ -1591,7 +1591,7 @@ var rawInput = ["x=516, y=699..702",
 "y=787, x=565..576",
 "y=1184, x=623..629"];
 
-var springCoord = [0,500];
+var springCoord = [500,0];
 var walls = {
 	"x":{
 
@@ -1716,7 +1716,7 @@ function parseAndPrintInput(){
 			}
 			else{ //empty
 				map[j].push(0);
-				td.className = "empty";
+				td.className = (j<bounds.y.min)?"outofbound":"empty";
 			}
 
 			td.id = "map_"+i+"_"+j; // (x,y)
@@ -1730,6 +1730,8 @@ function parseAndPrintInput(){
 
 	document.getElementById("out").innerHTML = "";
 	document.getElementById("out").appendChild(table);
+
+	document.getElementById("map_"+springCoord[0]+"_"+springCoord[1]).className = document.getElementById("map_"+springCoord[0]+"_"+springCoord[1]).className.replace("outofbound","spring");
 }
 
 parseAndPrintInput()
