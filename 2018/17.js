@@ -1598,12 +1598,15 @@ var walls = {
 	},
 	"y":{
 
+	},
+	"search":{
+
 	}
 };
 
 var map = [];
 /* MAP
-	[ x, y ] = ??:
+	[ y, x ] = ??:
 		0: Empty
 		1: Wall
 		2: Water
@@ -1622,6 +1625,7 @@ var bounds = {
 
 function parseAndPrintInput(){
 	var i,j,k;
+	var _x,_y;
 	var x1,x2,y1,y2;
 
 	for(i=0;i<rawInput.length;i++){
@@ -1641,6 +1645,8 @@ function parseAndPrintInput(){
 			for(j=y1;j<=y2;j++){
 				walls["x"][x1].push(j);
 
+				walls.search[x1+"_"+j] = true;
+
 				if(walls["y"].hasOwnProperty(j)){
 					walls["y"][j].push(x1);
 				}
@@ -1651,10 +1657,10 @@ function parseAndPrintInput(){
 
 			//Get Bounds
 			bounds.x.min = Math.min(bounds.x.min,x1);
-			bounds.x.max = Math.min(bounds.x.max,x1);
+			bounds.x.max = Math.max(bounds.x.max,x1);
 
 			bounds.y.min = Math.min(bounds.y.min,y1);
-			bounds.y.max = Math.min(bounds.y.max,y2);
+			bounds.y.max = Math.max(bounds.y.max,y2);
 
 		}
 		else{ // == y
@@ -1670,6 +1676,8 @@ function parseAndPrintInput(){
 			for(j=x1;j<=x2;j++){
 				walls["y"][y1].push(j);
 
+				walls.search[j+"_"+y1] = true;
+
 				if(walls["x"].hasOwnProperty(j)){
 					walls["x"][j].push(y1);
 				}
@@ -1680,19 +1688,48 @@ function parseAndPrintInput(){
 
 			//Get Bounds
 			bounds.x.min = Math.min(bounds.x.min,x1);
-			bounds.x.max = Math.min(bounds.x.max,x2);
+			bounds.x.max = Math.max(bounds.x.max,x2);
 
 			bounds.y.min = Math.min(bounds.y.min,y1);
-			bounds.y.max = Math.min(bounds.y.max,y1);
+			bounds.y.max = Math.max(bounds.y.max,y1);
 		}
 	}
 
-	for(i=bounds.x.min;i<bounds.x.max-bounds.x.min;i++){
-		for(j=bounds.y.min;j<bounds.y.max-bounds.y.min;j++){
-			map[y][x]
+	springCoord[0] -= bounds.x.min;
+	//springCoord[1] -= bounds.y.min;
+
+	var table = document.createElement("table");
+	map = [];
+
+	for(j=0;j<bounds.y.max;j++){ //for y it's a special case since the spring of water starts from y=0
+		var tr = document.createElement("tr");
+		_y = j;
+
+		map.push([]);
+
+		for(i=0;i<bounds.x.max-bounds.x.min;i++){
+			_x = i+bounds.x.min;
+			var td = document.createElement("td");
+			if( walls.search[_x+"_"+_y] ){ //wall exists
+				map[j].push(1);
+				td.className = "wall";
+			}
+			else{ //empty
+				map[j].push(0);
+				td.className = "empty";
+			}
+
+			td.id = "map_"+i+"_"+j; // (x,y)
+			td.className += " coord_"+_x+"_"+_y; //(x,y)
+
+			tr.appendChild(td);
 		}
+
+		table.appendChild(tr);
 	}
 
+	document.getElementById("out").innerHTML = "";
+	document.getElementById("out").appendChild(table);
 }
 
 parseAndPrintInput()
