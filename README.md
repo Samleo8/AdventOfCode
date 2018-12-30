@@ -1,8 +1,8 @@
 # Advent of Code
 
-2018: [![https://adventofcode.com/2018](https://img.shields.io/badge/solved-22%20of%2050-orange.svg)](https://adventofcode.com/2018)
+2018: [![https://adventofcode.com/2018](https://img.shields.io/badge/solved-21%20of%2050-orange.svg)](https://adventofcode.com/2018)
 
-2015: [![https://adventofcode.com/2015](https://img.shields.io/badge/solved-19%20of%2050-orange.svg)](https://adventofcode.com/2015)
+2015: [![https://adventofcode.com/2015](https://img.shields.io/badge/solved-21%20of%2050-orange.svg)](https://adventofcode.com/2015)
 
 Codes used for [Advent of Code](http://adventofcode.com/ "Advent of Code").
 
