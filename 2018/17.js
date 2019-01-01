@@ -1593,7 +1593,7 @@ var rawInput = [
 	"y=1184, x=623..629"
 ];
 
-//*
+/*
 rawInput = [
 	"x=495, y=2..7",
 	"y=7, x=495..501",
@@ -1813,6 +1813,7 @@ function downFlow(x,y){
 			return sideFlow(x,y+dir["up"][1]);
 		case 2: //WATER
 			console.log("Water at", x+","+y );
+			//return sideFlow(x,y+dir["up"][1]);
 			return 0;
 		default:
 			break;
@@ -1873,15 +1874,16 @@ function sideFlow(x,y){
 
 					console.log(i,_x,y);
 
-					//Check for bounds and wall/water
-					if(_x<bounds.x.min || _x>bounds.x.max || getMapValue(_x,y)!=0){
+					//Check for bounds and wall
+					if(_x<bounds.x.min || _x>bounds.x.max || getMapValue(_x,y)==1){
 						continue_dir[i] = false;
 						continue;
 					}
 
-					//Paint and add to total
+					//Paint and add to total, but only if it's empty
+					//It's possible that we have to (inefficiently) retraverse water until we hit a wall
 					paint(_x,y);
-					total++;
+					if(getMapValue(_x,y)==0) total++;
 
 					//Check if have to flow over
 					if( getMapValue(_x,y+dir["down"][1])==0 ){
@@ -1943,8 +1945,8 @@ function paint(_x,_y){
 		Map's value or box/element (visualisation)
 */
 function getMapValue(_x,_y){
-	if(_x<bounds.x.min || _x>=bounds.x.max || _y<0 || _y>=map.length){
-		console.error("ERROR: Invalid coordinates for map at ("+_x+","+_y+")");
+	if(_x<bounds.x.min || _x>bounds.x.max || _y<0 || _y>=map.length){
+		console.error("ERROR: Invalid coordinates for map at coord ("+_x+","+_y+")");
 		return -1;
 	}
 
