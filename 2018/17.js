@@ -1772,7 +1772,9 @@ function parseAndPrintInput(print){
 /*=======FUNCTION: fillStart============
 	Start flood-filling grid
 */
-function fillStart(){
+function startTap(){
+	reset();
+
 	var ans = downFlow(springCoord.x,springCoord.y,dir["down"]);
 	document.getElementById("out_data").innerHTML = "Answer: "+ans;
 }
@@ -1800,31 +1802,30 @@ function downFlow(x,y){
 		return 0;
 	}
 
+	console.log("==Downflow==");
+
 	//Check if we hit a wall or body of water
 	switch( getMapValue(x,y) ){
-		console.log( ((map[y][x-bounds.x.min]==1)?"Wall:":"Water:"), x+","+y );
-		//WALL
-		case 1:
+		case 1: //WALL
+			console.log("Wall at ", x+","+y, "Backtracking...");
+
 			//Backtrack upwards and commence sideFlow
 			return sideFlow(x,y+dir["up"][1]);
-		//WATER
-		case 2:
+		case 2: //WATER
+			console.log("Water at", x+","+y );
 			return 0;
 		default:
 			break;
 	}
 
 	//If we reach here, it implies that it's empty!
-
-	//Paint (purely for visualisation only)
+	//Therefore, paint (set as water + visualisation)
 	paint(x,y);
 
-	//SPECIAL CASE: If y-coordinate is at the max bound, we are done
-	//if(y==bounds.y.max || x==0 || x==bounds.x.max) return 1;
-
 	//Flow in accordance with the direction of movement
-	//console.log("Continue flowing down...",x,y,dir);
-	return 1+downFlow(x+dir["down"][0],y+dir["down"][1]);
+	console.log("Continue flowing down...",x,y,dir);
+	//Note that we cannot count it if it's above the minimum y line.
+	return ((y<bounds.y.min)?0:1)+downFlow(x+dir["down"][0],y+dir["down"][1]);
 }
 
 function sideFlow(x,y){
@@ -1836,25 +1837,82 @@ function sideFlow(x,y){
 		return 0;
 	}
 
-	if(map[y][x-bounds.x.min] == 2){ //we hit water, stop
-			return 0;
-		}
-		else{ //we hit a wall. move up one layer (remember to backtrack)
-			return waterFlow(
-				x-dir[0],
-				y-1,
-				dirByName["up"]
-			);
-		}
+	console.log("==Sideflow starting from ("+x+","+y+")==");
+
+	var i;
+	var total = 0;
+	var coordsToFlowDown = [];
+	var x2 = {
+		"left":x,
+		"right":x
+	}
+	var continue_dir = {
+		"left":true,
+		"right":true
 	}
 
+	switch(getMapValue(x,y)){
+		//WALL
+		case 1:
+			return 0;
+		//EMPTY OR WATER
+		case 0: //Empty (weird case)
+			total = 1;
+			paint(x,y);
+		case 2: //Water (expected case)
+			console.log("Water!");
 
-		//Check if below us is empty (if we are moving moving sideways)
-		if(!getMapValue(x,y+1) && (dir==dir["left"] || dir==dir["right"]) ){
-			console.log("Falling down: "+x+","+y);
+			while(true){
+				if(!continue_dir["left"] && !continue_dir["right"]) break;
 
-			return 1+downFlow(x+dir["down"][0],y+dir["down"][1]);
-		}
+				for(i in continue_dir){
+					if(!continue_dir[i]) continue;
+
+					x2[i] += dir[i][0];
+					_x = x2[i];
+
+					console.log(i,_x,y);
+
+					//Check for bounds and wall/water
+					if(_x<bounds.x.min || _x>bounds.x.max || getMapValue(_x,y)!=0){
+						continue_dir[i] = false;
+						continue;
+					}
+
+					//Paint and add to total
+					paint(_x,y);
+					total++;
+
+					//Check if have to flow over
+					if( getMapValue(_x,y+dir["down"][1])==0 ){
+						coordsToFlowDown.push([_x,y]);
+						continue_dir[i] = false;
+						continue;
+					}
+				}
+			}
+			break;
+		default:
+			return 0;
+	}
+
+	//Check if we need to start overflow (downwards) anywhere
+	var coord;
+	for(i=0;i<coordsToFlowDown.length;i++){
+		coord = coordsToFlowDown[i];
+
+		//Push to coordsToFlowDown array. Note that it's important to only start the recursion process when both sides are done
+		total += downFlow(coord[0]+dir["down"][0],coord[1]+dir["down"][1]);
+	}
+
+	//If we hit 2 walls, we need to increase water level.
+	//Thus we need to backtrack to where the flow came from and sideFlow from there
+	//To check this, we see if the overflow array is empty
+	if(!coordsToFlowDown.length){
+		total+=sideFlow(x,y+dir["up"][1]);
+	}
+
+	return total;
 }
 
 /*=======FUNCTION: paint(x,y)============
@@ -1874,7 +1932,7 @@ function paint(_x,_y){
 
 	map[y][x] = 2;
 
-	console.log("Water at "+x+"_"+y,ele);
+	console.log("Water at ("+_x+","+_y+")",ele);
 }
 
 /*=======MAP RETRIVAL FUNCTIONS========
@@ -1926,12 +1984,18 @@ function reset(){
 		(document.getElementById("grid_output") == null)
 	);
 
-	var ele = document.getElementsByClassName("water");
-	for(var i=0;i<ele.length;i++){
-		if( parseInt(ele[i].id.split("_")[1]) < bounds.y.min)
-			ele[i].className = ele[i].className.replace("water","outofbound");
-		else
-			ele[i].className = ele[i].className.replace("water","empty");
+	var i,eles = document.getElementsByClassName("water");
+	console.log(eles);
+
+	for(i=eles.length-1;i>=0;i--){ //have to loop backwards
+		var ele = eles[i];
+
+		if( parseInt(ele.id.split("_")[1]) < bounds.y.min ){
+			ele.className = ele.className.replace("water","outofbound");
+		}
+		else{
+			ele.className = ele.className.replace("water","empty");
+		}
 	}
 }
 
