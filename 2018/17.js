@@ -1593,7 +1593,7 @@ var rawInput = [
 	"y=1184, x=623..629"
 ];
 
-/*
+//*
 rawInput = [
 	"x=495, y=2..7",
 	"y=7, x=495..501",
@@ -1602,7 +1602,13 @@ rawInput = [
 	"x=506, y=1..2",
 	"x=498, y=10..13",
 	"x=504, y=10..13",
-	"y=13, x=498..504"
+	"y=13, x=498..504",
+	"x=493, y=20..31",
+	"x=516, y=20..31",
+	"y=31, x=493..516",
+	"y=28, x=503..506",
+	"x=506, y=26..28",
+	"x=503, y=26..28"
 ];
 //*/
 
@@ -1813,8 +1819,12 @@ function downFlow(x,y){
 			return sideFlow(x,y+dir["up"][1]);
 		case 2: //WATER
 			console.log("Water at", x+","+y );
-			//return sideFlow(x,y+dir["up"][1]);
-			return 0;
+			if(!stop){
+				return sideFlow(x,y+dir["up"][1]);
+			}
+			else{
+				return 0;
+			}
 		default:
 			break;
 	}
@@ -1846,11 +1856,14 @@ function sideFlow(x,y){
 	var x2 = {
 		"left":x,
 		"right":x
-	}
+	};
 	var continue_dir = {
 		"left":true,
 		"right":true
-	}
+	};
+
+	var wallHit = 0;
+	var toPaint = [];
 
 	switch(getMapValue(x,y)){
 		//WALL
@@ -1872,21 +1885,42 @@ function sideFlow(x,y){
 					x2[i] += dir[i][0];
 					_x = x2[i];
 
-					console.log(i,_x,y);
+					console.log(i,_x,y,getMapEle(_x,y));
 
 					//Check for bounds and wall
-					if(_x<bounds.x.min || _x>bounds.x.max || getMapValue(_x,y)==1){
+					if(_x<bounds.x.min || _x>bounds.x.max){
+						console.log("Out of bounds!");
+
+						if(	getMapValue(_x-dir[i][0],y+dir["down"][1])==2 ){
+							//if behind and below is water, then it's not a valid flow
+							console.log("Invalid flow at x =",_x);
+							return 0;
+						}
+
+						continue_dir[i] = false;
+
+						continue;
+					}
+
+					if(getMapValue(_x,y)==1){
+						wallHit++;
 						continue_dir[i] = false;
 						continue;
 					}
 
-					//Paint and add to total, but only if it's empty
+					//Add to total and toPaint array, but only if it's empty
 					//It's possible that we have to (inefficiently) retraverse water until we hit a wall
-					paint(_x,y);
-					if(getMapValue(_x,y)==0) total++;
+					if(getMapValue(_x,y)==0){
+						total++;
+						toPaint.push([_x,y]);
+					}
 
 					//Check if have to flow over
 					if( getMapValue(_x,y+dir["down"][1])==0 ){
+						if(	getMapValue(_x-dir[i][0],y+dir["down"][1])==2 ){ //if behind and below is water, then it's not a valid flow since overflows are only supposed to happen after a wall
+							return 0;
+						}
+
 						coordsToFlowDown.push([_x,y]);
 						continue_dir[i] = false;
 						continue;
@@ -1896,6 +1930,11 @@ function sideFlow(x,y){
 			break;
 		default:
 			return 0;
+	}
+
+	//Only paint here because we might have encountered an invalid flow and would have painted unnecessarily
+	for(i=0;i<toPaint.length;i++){
+		paint(toPaint[i][0],toPaint[i][1]);
 	}
 
 	//Check if we need to start overflow (downwards) anywhere
@@ -1910,7 +1949,8 @@ function sideFlow(x,y){
 	//If we hit 2 walls, we need to increase water level.
 	//Thus we need to backtrack to where the flow came from and sideFlow from there
 	//To check this, we see if the overflow array is empty
-	if(!coordsToFlowDown.length){
+
+	if(wallHit==2){
 		total+=sideFlow(x,y+dir["up"][1]);
 	}
 
@@ -1934,7 +1974,7 @@ function paint(_x,_y){
 
 	map[y][x] = 2;
 
-	console.log("Water at ("+_x+","+_y+")",ele);
+	//console.log("Painted water at ("+_x+","+_y+")",ele);
 }
 
 /*=======MAP RETRIVAL FUNCTIONS========
@@ -1945,7 +1985,7 @@ function paint(_x,_y){
 		Map's value or box/element (visualisation)
 */
 function getMapValue(_x,_y){
-	if(_x<bounds.x.min || _x>bounds.x.max || _y<0 || _y>=map.length){
+	if(_x<bounds.x.min || _x>bounds.x.max || _y<0 || _y>=map.length || isNaN(_x) || isNaN(_y) ){
 		console.error("ERROR: Invalid coordinates for map at coord ("+_x+","+_y+")");
 		return -1;
 	}
