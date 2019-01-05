@@ -1826,7 +1826,7 @@ function downFlow(x,y){
 
 			//Backtrack upwards and commence sideFlow
 			return sideFlow(x,y+dir["up"][1]);
-		case 2: //WATER
+		case 2: case 3: //WATER
 			//console.log("Water at", x+","+y );
 			if(!stop){
 				return sideFlow(x,y+dir["up"][1]);
@@ -1882,7 +1882,7 @@ function sideFlow(x,y){
 		case 0: //Empty (weird case)
 			total = 1;
 			paint(x,y);
-		case 2: //Water (expected case)
+		case 2: case 3: //Water (expected case)
 			//console.log("Water!");
 
 			while(true){
@@ -1943,7 +1943,7 @@ function sideFlow(x,y){
 
 	//Only paint here because we might have encountered an invalid flow and would have painted unnecessarily
 	for(i=0;i<toPaint.length;i++){
-		paint(toPaint[i][0],toPaint[i][1]);
+		paint(toPaint[i][0],toPaint[i][1],(wallHit==2));
 	}
 
 	//Check if we need to start overflow (downwards) anywhere
@@ -1973,11 +1973,15 @@ Paints box at coordinate (x,y), as per input, for visualisation
 
 	@return: null
 */
-function paint(_x,_y){
+function paint(_x, _y, willOverflow){
 	var x = _x-bounds.x.min;
 	var y = _y;
 
-	map[y][x] = 2;
+	if(willOverflow){
+
+	}
+
+	map[y][x] = (willOverflow)?2:3;
 
 	if(document.getElementById("grid_output") == null) return;
 
