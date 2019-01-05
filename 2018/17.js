@@ -1599,16 +1599,16 @@ rawInput = [
 	"y=7, x=495..501",
 	"x=501, y=3..7",
 	"x=498, y=2..4",
-	"x=506, y=1..2",
 	"x=498, y=10..13",
 	"x=504, y=10..13",
 	"y=13, x=498..504",
-	"x=493, y=20..31",
-	"x=516, y=20..31",
-	"y=31, x=493..516",
+	"x=497, y=20..31",
+	"x=512, y=20..31",
+	"y=31, x=498..512",
 	"y=28, x=503..506",
 	"x=506, y=26..28",
-	"x=503, y=26..28"
+	"x=503, y=26..28",
+	"y=5, x=512..513"
 ];
 //*/
 
@@ -1778,8 +1778,8 @@ function parseAndPrintInput(print){
 /*=======FUNCTION: fillStart============
 	Start flood-filling grid
 */
-function startTap(){
-	reset();
+function startTap(print){
+	reset(print);
 
 	var ans = downFlow(springCoord.x,springCoord.y,dir["down"]);
 	document.getElementById("out_data").innerHTML = "Answer: "+ans;
@@ -1808,17 +1808,17 @@ function downFlow(x,y){
 		return 0;
 	}
 
-	console.log("==Downflow==");
+	//console.log("==Downflow==");
 
 	//Check if we hit a wall or body of water
 	switch( getMapValue(x,y) ){
 		case 1: //WALL
-			console.log("Wall at ", x+","+y, "Backtracking...");
+			//console.log("Wall at ", x+","+y, "Backtracking...");
 
 			//Backtrack upwards and commence sideFlow
 			return sideFlow(x,y+dir["up"][1]);
 		case 2: //WATER
-			console.log("Water at", x+","+y );
+			//console.log("Water at", x+","+y );
 			if(!stop){
 				return sideFlow(x,y+dir["up"][1]);
 			}
@@ -1834,7 +1834,7 @@ function downFlow(x,y){
 	paint(x,y);
 
 	//Flow in accordance with the direction of movement
-	console.log("Continue flowing down...",x,y,dir);
+	//console.log("Continue flowing down...",x,y,dir);
 	//Note that we cannot count it if it's above the minimum y line.
 	return ((y<bounds.y.min)?0:1)+downFlow(x+dir["down"][0],y+dir["down"][1]);
 }
@@ -1848,7 +1848,7 @@ function sideFlow(x,y){
 		return 0;
 	}
 
-	console.log("==Sideflow starting from ("+x+","+y+")==");
+	//console.log("==Sideflow starting from ("+x+","+y+")==");
 
 	var i;
 	var total = 0;
@@ -1874,7 +1874,7 @@ function sideFlow(x,y){
 			total = 1;
 			paint(x,y);
 		case 2: //Water (expected case)
-			console.log("Water!");
+			//console.log("Water!");
 
 			while(true){
 				if(!continue_dir["left"] && !continue_dir["right"]) break;
@@ -1885,15 +1885,15 @@ function sideFlow(x,y){
 					x2[i] += dir[i][0];
 					_x = x2[i];
 
-					console.log(i,_x,y,getMapEle(_x,y));
+					//console.log(i,_x,y,getMapEle(_x,y));
 
 					//Check for bounds and wall
 					if(_x<bounds.x.min || _x>bounds.x.max){
-						console.log("Out of bounds!");
+						//console.log("Out of bounds!");
 
 						if(	getMapValue(_x-dir[i][0],y+dir["down"][1])==2 ){
 							//if behind and below is water, then it's not a valid flow
-							console.log("Invalid flow at x =",_x);
+							//console.log("Invalid flow at x =",_x);
 							return 0;
 						}
 
@@ -1968,11 +1968,13 @@ function paint(_x,_y){
 	var x = _x-bounds.x.min;
 	var y = _y;
 
+	map[y][x] = 2;
+
+	if(document.getElementById("grid_output") == null) return;
+
 	var ele = getMapEle(_x,_y);
 	if(ele)
 		ele.className = ele.className.replace(new RegExp("(empty|outofbound)","gi"),"water");
-
-	map[y][x] = 2;
 
 	//console.log("Painted water at ("+_x+","+_y+")",ele);
 }
@@ -2021,18 +2023,22 @@ Array.prototype.searchClosest = function(item, ind1, ind2){
 }
 //*/
 
-function reset(){
+function reset(print){
+	if(print == undefined || print == null || typeof print == "undefined"){
+		print = true;
+	}
+
 	parseAndPrintInput(
-		(document.getElementById("grid_output") == null)
+		(print && document.getElementById("grid_output") == null)
 	);
 
 	var i,eles = document.getElementsByClassName("water");
-	console.log(eles);
+	//console.log(eles);
 
 	for(i=eles.length-1;i>=0;i--){ //have to loop backwards
 		var ele = eles[i];
 
-		if( parseInt(ele.id.split("_")[1]) < bounds.y.min ){
+		if( parseInt(ele.id.split("_")[2]) < bounds.y.min ){
 			ele.className = ele.className.replace("water","outofbound");
 		}
 		else{
@@ -2041,4 +2047,4 @@ function reset(){
 	}
 }
 
-reset();
+reset(false);
