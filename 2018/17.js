@@ -1593,7 +1593,7 @@ var rawInput = [
 	"y=1184, x=623..629"
 ];
 
-//*
+/*
 rawInput = [
 	"x=495, y=2..7",
 	"y=7, x=495..501",
@@ -1608,7 +1608,7 @@ rawInput = [
 	"y=28, x=503..506",
 	"x=506, y=26..28",
 	"x=503, y=26..28",
-	"y=5, x=512..513"
+	//"y=5, x=512..513"
 ];
 //*/
 
@@ -1721,6 +1721,11 @@ function parseAndPrintInput(print){
 		}
 	}
 
+	//IMPORTANT NOTE: Because "Any x coordinate is valid", we need to give the x-bounds a padding of 1
+	bounds.x.min -= 1;
+	bounds.x.max += 1;
+
+	/*
 	//Sort the arrays in walls.x/y array so that binary search can be conducted
 	for(i in walls.x){
 		walls.x[i].sort()
@@ -1729,6 +1734,7 @@ function parseAndPrintInput(print){
 	for(i in walls.y){
 		walls.y[i].sort()
 	}
+	*/
 
 	//springCoord.x -= bounds.x.min;
 	//springCoord.y -= bounds.y.min;
@@ -1743,7 +1749,6 @@ function parseAndPrintInput(print){
 		_y = j;
 
 		map.push([]);
-
 		for(i=0;i<=bounds.x.max-bounds.x.min;i++){
 			_x = i+bounds.x.min;
 			var td = document.createElement("td");
@@ -1782,7 +1787,11 @@ function startTap(print){
 	reset(print);
 
 	var ans = downFlow(springCoord.x,springCoord.y,dir["down"]);
-	document.getElementById("out_data").innerHTML = "Answer: "+ans;
+	document.getElementById("out_data").innerHTML = "Answer (tap constantly on): "+ans;
+}
+
+function stopTap(print){
+	reset(print);
 }
 
 /*=======FUNCTION: downFlow(x,y) and sideFlow(x,y)============
