@@ -2032,6 +2032,7 @@ function reset(print){
 		(print && document.getElementById("grid_output") == null)
 	);
 
+	document.getElementById("out_data").innerHTML = "";
 	var i,eles = document.getElementsByClassName("water");
 	//console.log(eles);
 
