@@ -1593,7 +1593,7 @@ var rawInput = [
 	"y=1184, x=623..629"
 ];
 
-/*
+//*
 rawInput = [
 	"x=495, y=2..7",
 	"y=7, x=495..501",
@@ -1628,7 +1628,8 @@ var map = [];
 	[ y, x ] = ??:
 		0: Empty
 		1: Wall
-		2: Water
+		2: Water that will no longer exist when the tap is off
+		3: Water that will stay even when the tap is off
 */
 
 var bounds = {
@@ -1774,7 +1775,7 @@ function parseAndPrintInput(print){
 		document.getElementById("out").innerHTML = "";
 		document.getElementById("out").appendChild(table);
 
-		var ele = getMapEle(springCoord.x,springCoord.y);
+		var ele = getMapEle(springCoord.x+1,springCoord.y);
 
 		ele.className = ele.className.replace("outofbound","spring");
 	}
@@ -1840,7 +1841,7 @@ function downFlow(x,y){
 
 	//If we reach here, it implies that it's empty!
 	//Therefore, paint (set as water + visualisation)
-	paint(x,y);
+	paint(x,y,true);
 
 	//Flow in accordance with the direction of movement
 	//console.log("Continue flowing down...",x,y,dir);
@@ -1881,9 +1882,16 @@ function sideFlow(x,y){
 		//EMPTY OR WATER
 		case 0: //Empty (weird case)
 			total = 1;
-			paint(x,y);
+			toPaint.push([x,y]);
+			//paint(x,y);
 		case 2: case 3: //Water (expected case)
 			//console.log("Water!");
+
+			/*if(getMapValue(x,y+dir["down"][1]) == 2){
+				//since we know that the water below us will overflow, this particular flow will be invalid
+				console.log("Invalid flow!",x,y);
+				return 0;
+			}*/
 
 			while(true){
 				if(!continue_dir["left"] && !continue_dir["right"]) break;
@@ -1943,7 +1951,7 @@ function sideFlow(x,y){
 
 	//Only paint here because we might have encountered an invalid flow and would have painted unnecessarily
 	for(i=0;i<toPaint.length;i++){
-		paint(toPaint[i][0],toPaint[i][1],(wallHit==2));
+		paint(toPaint[i][0],toPaint[i][1],(wallHit!=2));
 	}
 
 	//Check if we need to start overflow (downwards) anywhere
@@ -1977,17 +1985,22 @@ function paint(_x, _y, willOverflow){
 	var x = _x-bounds.x.min;
 	var y = _y;
 
-	if(willOverflow){
-
+	if(willOverflow == null || willOverflow == undefined || typeof willOverflow == "undefined"){
+		willOverflow = true;
 	}
+
+	//console.log(_x,_y,willOverflow);
 
 	map[y][x] = (willOverflow)?2:3;
 
 	if(document.getElementById("grid_output") == null) return;
 
 	var ele = getMapEle(_x,_y);
-	if(ele)
+	if(ele){
 		ele.className = ele.className.replace(new RegExp("(empty|outofbound)","gi"),"water");
+
+		if(willOverflow) ele.className += " stable";
+	}
 
 	//console.log("Painted water at ("+_x+","+_y+")",ele);
 }
@@ -2009,7 +2022,7 @@ function getMapValue(_x,_y){
 }
 
 function getMapEle(_x,_y){
-	var x = _x-bounds.x.min;
+	var x = _x-bounds.x.min-1;
 	var y = _y;
 	return document.getElementById("map_"+x+"_"+y);
 }
@@ -2061,4 +2074,4 @@ function reset(print){
 	}
 }
 
-reset(false);
+reset(true);
