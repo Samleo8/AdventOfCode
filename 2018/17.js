@@ -1593,7 +1593,7 @@ var rawInput = [
 	"y=1184, x=623..629"
 ];
 
-//*
+/*
 rawInput = [
 	"x=495, y=2..7",
 	"y=7, x=495..501",
@@ -1654,6 +1654,17 @@ function parseAndPrintInput(print){
 	var i,j,k;
 	var _x,_y;
 	var x1,x2,y1,y2;
+
+	bounds = {
+		"x":{
+			"min":1000000,
+			"max":-1000000
+		},
+		"y":{
+			"min":1000000,
+			"max":-1000000
+		}
+	}
 
 	for(i=0;i<rawInput.length;i++){
 		var r = new RegExp("([0-9]+)","g");
@@ -1775,7 +1786,7 @@ function parseAndPrintInput(print){
 		document.getElementById("out").innerHTML = "";
 		document.getElementById("out").appendChild(table);
 
-		var ele = getMapEle(springCoord.x+1,springCoord.y);
+		var ele = getMapEle(springCoord.x,springCoord.y);
 
 		ele.className = ele.className.replace("outofbound","spring");
 	}
@@ -1788,7 +1799,9 @@ function startTap(print){
 	reset(print);
 
 	var ans = downFlow(springCoord.x,springCoord.y,dir["down"]);
+	var ans2 = document.getElementsByClassName("stable").length;
 	document.getElementById("out_data").innerHTML = "Answer (tap constantly on): "+ans;
+	document.getElementById("out_data").innerHTML += "<br>Answer (tap turns off): "+ans2;
 }
 
 function stopTap(print){
@@ -1887,11 +1900,13 @@ function sideFlow(x,y){
 		case 2: case 3: //Water (expected case)
 			//console.log("Water!");
 
-			/*if(getMapValue(x,y+dir["down"][1]) == 2){
+			//*
+			if(getMapValue(x,y+dir["down"][1]) == 2){
 				//since we know that the water below us will overflow, this particular flow will be invalid
-				console.log("Invalid flow!",x,y);
+				//console.log("Invalid flow!",x,y);
 				return 0;
-			}*/
+			}
+			//*/
 
 			while(true){
 				if(!continue_dir["left"] && !continue_dir["right"]) break;
@@ -1908,11 +1923,13 @@ function sideFlow(x,y){
 					if(_x<bounds.x.min || _x>bounds.x.max){
 						//console.log("Out of bounds!");
 
+						//*
 						if(	getMapValue(_x-dir[i][0],y+dir["down"][1])==2 ){
 							//if behind and below is water, then it's not a valid flow
 							//console.log("Invalid flow at x =",_x);
 							return 0;
 						}
+						//*/
 
 						continue_dir[i] = false;
 
@@ -1931,12 +1948,17 @@ function sideFlow(x,y){
 						total++;
 						toPaint.push([_x,y]);
 					}
+					else if(getMapValue(_x,y)==2){
+						toPaint.push([_x,y]);
+					}
 
 					//Check if have to flow over
 					if( getMapValue(_x,y+dir["down"][1])==0 ){
+						//*
 						if(	getMapValue(_x-dir[i][0],y+dir["down"][1])==2 ){ //if behind and below is water, then it's not a valid flow since overflows are only supposed to happen after a wall
 							return 0;
 						}
+						//*/
 
 						coordsToFlowDown.push([_x,y]);
 						continue_dir[i] = false;
@@ -1966,8 +1988,10 @@ function sideFlow(x,y){
 	//If we hit 2 walls, we need to increase water level.
 	//Thus we need to backtrack to where the flow came from and sideFlow from there
 	//To check this, we see if the overflow array is empty
+	//We also want to set the downflow as not overflow
 
 	if(wallHit==2){
+		paint(x,y,false);
 		total+=sideFlow(x,y+dir["up"][1]);
 	}
 
@@ -1999,7 +2023,7 @@ function paint(_x, _y, willOverflow){
 	if(ele){
 		ele.className = ele.className.replace(new RegExp("(empty|outofbound)","gi"),"water");
 
-		if(willOverflow) ele.className += " stable";
+		if(!willOverflow) ele.className += " stable";
 	}
 
 	//console.log("Painted water at ("+_x+","+_y+")",ele);
@@ -2022,7 +2046,7 @@ function getMapValue(_x,_y){
 }
 
 function getMapEle(_x,_y){
-	var x = _x-bounds.x.min-1;
+	var x = _x-bounds.x.min;
 	var y = _y;
 	return document.getElementById("map_"+x+"_"+y);
 }
