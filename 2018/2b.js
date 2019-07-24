@@ -16,7 +16,7 @@ var compareStr = function(str1,str2){
 	}
 
 	return uncommmon;
-}
+};
 
 ans = [];
 
