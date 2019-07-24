@@ -9,12 +9,12 @@ input = "hepxcrrq"
 '''
 def valid_pwd(_str):
 	#Second requirement
-	if re.search(r"[i|o|l]",_str)!=None:
+	if re.search(r"[iol]",_str)!=None:
 		#print("Invalid: Letters i/o/l found")
 		return False
 
 	#First requirement
-	if re.search(r"(abc|bcd|cde|def|efg|fgh|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)",_str)==None:
+	if re.search(r"(abc|bcd|cde|def|efg|fgh|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)",_str) is None:
 		#print("Invalid: No straight increasing letters found")
 		return False
 
