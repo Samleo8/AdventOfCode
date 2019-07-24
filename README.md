@@ -6,6 +6,10 @@
 
 Codes used for [Advent of Code](http://adventofcode.com/ "Advent of Code").
 
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/Samleo8/AdventOfCode.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Samleo8/AdventOfCode/alerts/)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/Samleo8/AdventOfCode.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Samleo8/AdventOfCode/context:javascript)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Samleo8/AdventOfCode.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Samleo8/AdventOfCode/context:python)
+
 [![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/uses-html.svg)](https://samleo8.github.io/AdventOfCode/)
 
 ## Visualisations (2018)
