@@ -48,7 +48,7 @@ def part2():
         # first and last digit must be properly handled because of potential character overlap
         # (eg eighthree should be 8 not 3) and (twone should be 2ne not tw1)
         first_pos, first_key = None, None
-        last_pos_key = []
+        last_pos, last_key = None, None
         for key in digitsMap.keys():
             pos = line.find(key)
             if pos != -1:
@@ -57,32 +57,19 @@ def part2():
 
             pos = line.rfind(key)
             if pos != -1:
-                last_pos_key.append((pos, key))
+                if last_pos is None or pos > last_pos:
+                    last_pos, last_key = pos, key
 
-        # Get the last or potential last key
-        last_key = None
-        last_pos_key.sort()
-
-        N = len(last_pos_key)
-        if N <= 1:
-            last_key = None
-        else:
-            last_pos, last_key = last_pos_key[-1]
-            potential_last_pos, potential_last_key = last_pos_key[-2]
-            if potential_last_pos + len(potential_last_key) > last_pos:
-                last_key = potential_last_key
-
-        if first_key is not None:
-            # print(first_key, last_key, line.strip(), end=" -> ")
-            line = line.replace(first_key, str(digitsMap[first_key]), 1)
-            if last_key is not None:
-                line = line.replace(last_key, str(digitsMap[last_key]))
-            # print(line.strip())
+        _line = list(line)
+        if first_pos is not None:
+            _line[first_pos] = str(digitsMap[first_key])
+        if last_pos is not None:
+            _line[last_pos] = str(digitsMap[last_key])
 
         for key in digitsMap.keys():
             line = line.replace(key, str(digitsMap[key]))
 
-        lines[i] = line
+        lines[i] = "".join(_line)
 
     print("part2", calculateDigits(lines))
 
